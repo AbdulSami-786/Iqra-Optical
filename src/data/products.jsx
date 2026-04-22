@@ -1,0 +1,648 @@
+export const products = [
+    {
+      "id": 1,
+      "name": "SL-5503 - Metal Round Shape",
+      "originalPrice": "1999",
+      "discountPrice": "1499",
+      "reviews": 12,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "men",
+      "gender": "Men",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Gun Metalic", "hex": "#ffffff", "image": "./glass1.jpeg" },
+        { "colorName": "Golden", "hex": "#000000", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "9722 - Metal Oval Shape",
+      "originalPrice": "2500",
+      "discountPrice": "1799",
+      "reviews": 24,
+      "madeInTaiwan": false,
+      "discount": "20%",
+      "category": "men",
+      "gender": "men",
+      "shape": "Oval",
+      "variants": [
+        { "colorName": "Black", "hex": "#b76e79", "image": "./glass1.jpeg" },
+        { "colorName": "Black & Gold", "hex": "#000000", "image": "./glass1.jpeg" },
+        { "colorName": "Black & Brown", "hex": "#8b5a2b", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "806271 - Plastic Oval Shape ",
+      "originalPrice": "2000",
+      "discountPrice": "1499",
+      "reviews": 8,
+      "madeInTaiwan": true,
+      "discount": "15%",
+      "category": "kids",
+      "gender": "men",
+      "shape": "Rectangle",
+      "variants": [
+        { "colorName": "Leopard", "hex": "#3498db", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "5011 - Metal & Plastic Round Shape",
+      "originalPrice": "2800",
+      "discountPrice": "1899",
+      "reviews": 45,
+      "madeInTaiwan": false,
+      "discount": "20%",
+      "category": "contactlens",
+      "gender": "men",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Black & Gray", "hex": "#e0e0e0", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "2603 - Curve Square Half Frame Plastic",
+      "originalPrice": "2899",
+      "discountPrice": "2199",
+      "reviews": 31,
+      "madeInTaiwan": true,
+      "discount": "15%",
+      "category": "men",
+      "gender": "Men",
+      "shape": "Square",
+      "variants": [
+        { "colorName": "Tiger", "hex": "#000000", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "9702 Metal Oval",
+      "originalPrice": "1899",
+      "discountPrice": "1499",
+      "reviews": 18,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "men",
+      "gender": "Men",
+      "shape": "Oval",
+      "variants": [
+        { "colorName": "Gold", "hex": "#ffd700", "image": "./glass1.jpeg" },
+        { "colorName": "Brown", "hex": "#c0c0c0", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "JV5816 - Plastic Curve Square Shape",
+      "originalPrice": "15,999",
+      "discountPrice": "1399",
+      "reviews": 6,
+      "madeInTaiwan": true,
+      "discount": "15%",
+      "category": "unisex",
+      "gender": "Unisex",
+      "shape": "Square",
+      "variants": [
+        { "colorName": "Black & Purple", "hex": "#f1c40f", "image": "./glass1.jpeg" },
+        { "colorName": "Black & Pink", "hex": "#ff69b4", "image": "./glass1.jpeg" },
+        { "colorName": "Black & Orange", "hex": "#9b59b6", "image": "./glass1.jpeg" },
+        { "colorName": "Black & Yellow", "hex": "#f1c40f", "image": "./glass1.jpeg" },
+        { "colorName": "Black & Green", "hex": "#ff69b4", "image": "./glass1.jpeg" },
+        { "colorName": "Black & Blue", "hex": "#9b59b6", "image": "./glass1.jpeg" },
+        { "colorName": "Black", "hex": "#ff69b4", "image": "./glass1.jpeg" },
+        { "colorName": "Black & Red", "hex": "#9b59b6", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "D8822 - Plastic Square Shape",
+      "originalPrice": "1499",
+      "discountPrice": "1199",
+      "reviews": 52,
+      "madeInTaiwan": false,
+      "discount": "20%",
+      "category": "contactlens",
+      "gender": "Women",
+      "shape": "Square",
+      "variants": [
+        { "colorName": "Black & White", "hex": "#e0e0e0", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "PS8035 - Plastic Square Shape",
+      "originalPrice": "1899",
+      "discountPrice": "1399",
+      "reviews": 27,
+      "madeInTaiwan": true,
+      "discount": "15%",
+      "category": "men",
+      "gender": "Men",
+      "shape": "Wayfarer",
+      "variants": [
+        { "colorName": "Black", "hex": "#000000", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "HZ281001 - Plastic Square Shape",
+      "originalPrice": "1899",
+      "discountPrice": "1499",
+      "reviews": 33,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "men",
+      "gender": "Men",
+      "shape": "Square",
+      "variants": [
+        { "colorName": "Black & Blue", "hex": "#000000", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "D8815 - Plastic Vaffer Shape",
+      "originalPrice": "1899",
+      "discountPrice": "1499",
+      "reviews": 4,
+      "madeInTaiwan": true,
+      "discount": "15%",
+      "category": "men",
+      "gender": "Men",
+      "shape": "Vaffer",
+      "variants": [
+        { "colorName": "White & Black", "hex": "#e67e22", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "9362 - Plastic Square Shape",
+      "originalPrice": "1499",
+      "discountPrice": "1199",
+      "reviews": 67,
+      "madeInTaiwan": false,
+      "discount": "20%",
+      "category": "contactlens",
+      "gender": "Women",
+      "shape": "Square",
+      "variants": [
+        { "colorName": "Black & Shade Mahroon", "hex": "#3498db", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "D8953 - Plastic Square Shape",
+      "originalPrice": "1799",
+      "discountPrice": "1499",
+      "reviews": 41,
+      "madeInTaiwan": true,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Square",
+      "variants": [
+        { "colorName": "Leopard" , "hex": "#ffd700", "image": "./glass1.jpeg" },
+        { "colorName": "mahroon", "hex": "#c0c0c0", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "D8967 - Plastic Round Shape ",
+      "originalPrice": "1799",
+      "discountPrice": "1499",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Leopard", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "TR1020 Plastic Eye Shape",
+      "originalPrice": "1499",
+      "discountPrice": "1199",
+      "reviews": 15,
+      "madeInTaiwan": true,
+      "discount": "15%",
+      "category": "men",
+      "gender": "Men",
+      "shape": "Geometric",
+      "variants": [
+        { "colorName": "Brown", "hex": "#333333", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "BB6522 Plastic Eye Shape",
+      "originalPrice": "2599",
+      "discountPrice": "1799",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Eye",
+      "variants": [
+        { "colorName": "Black & Purple", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 17,
+      "name": "D9108 Plastic Square Shape ",
+      "originalPrice": "1499",
+      "discountPrice": "1199",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Square",
+      "variants": [
+        { "colorName": "Pink", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 18,
+      "name": "854 - Plastic Square Shape ",
+      "originalPrice": "1699",
+      "discountPrice": "1499",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Black & Red", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 19,
+      "name": "GG6218 - Plastic Sqaure Shape ",
+      "originalPrice": "1799",
+      "discountPrice": "1499",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Black & Purple", "hex": "#ff69b4", "image": "./glass1.jpeg`" }
+      ]
+    },
+    {
+      "id": 20,
+      "name": "9368 - Plastic Square Shape",
+      "originalPrice": "1899",
+      "discountPrice": "1499",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Purple", "hex": "#ff69b4", "image": "./glass1.jpeg" },
+        { "colorName": "Pink & White", "hex": "#ff69b4", "image": "./glass1.jpeg" },
+        { "colorName": "mahroon & White" , "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 21,
+      "name": "K88212 - Metal Eye Shape ",
+      "originalPrice": "2399",
+      "discountPrice": "1899",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Black", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 22,
+      "name": "B7195 - Plastic Eye Shape",
+      "originalPrice": "2599",
+      "discountPrice": "1999",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Black & White", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 23,
+      "name": "D1256 - Plastic Oval Shape ",
+      "originalPrice": "1899",
+      "discountPrice": "1499",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Purple", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 24,
+      "name": "P3002 - Plastic Square Shape",
+      "originalPrice": "1899",
+      "discountPrice": "1499",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Black & Green", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 25,
+      "name": "H3663 - Plastic Square Shape",
+      "originalPrice": "2599",
+      "discountPrice": "1999",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "White & Blue", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 26,
+      "name": "2011 - Plastic Oval Shape",
+      "originalPrice": "1899",
+      "discountPrice": "1499",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Brown", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 27,
+      "name": "AR2005 - Plastic Oval Shape",
+      "originalPrice": "2599",
+      "discountPrice": "2299",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Black & Red", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 28,
+      "name": "P210 - Plastic Square Shape",
+      "originalPrice": "1899",
+      "discountPrice": "1499",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Black", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 29,
+      "name": "AR1528 - Plastic Eye Shape",
+      "originalPrice": "2899",
+      "discountPrice": "2499",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Red & Offwithe", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 30,
+      "name": "H0016 - Plastic Eye Shape",
+      "originalPrice": "2299",
+      "discountPrice": "1899",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Black", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 31,
+      "name": "D8954 - Plastic Round Shape",
+      "originalPrice": "2299",
+      "discountPrice": "1799",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Purple", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 32,
+      "name": "D8978 - Plastic Oval Shape",
+      "originalPrice": "2699",
+      "discountPrice": "1899",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Purple", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 33,
+      "name": "K58083 - Plastic & Metal Round shape",
+      "originalPrice": "3299",
+      "discountPrice": "2899",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Tiger", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 34,
+      "name": "LFL228 - Plastic & Metal Round Shape",
+      "originalPrice": "2599",
+      "discountPrice": "1999",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Marble", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 35,
+      "name": "OF5123 - Plastic Round Shape",
+      "originalPrice": "1899",
+      "discountPrice": "1499",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Blue", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 36,
+      "name": "OF8651 - Plastic & metal Round Shape",
+      "originalPrice": "2599",
+      "discountPrice": "1999",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Leopard", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 37,
+      "name": "OF8506 - Plastic & Metal Round Shape",
+      "originalPrice": "3599",
+      "discountPrice": "2899",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Marbel", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 38,
+      "name": "260203- Plastic & Metal ROund Shape",
+      "originalPrice": "2599",
+      "discountPrice": "1999",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Marble", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 39,
+      "name": "9628 - Metal & Plastic Round Shape",
+      "originalPrice": "3299",
+      "discountPrice": "2799",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Leopard", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 40,
+      "name": "TR8008 - Plastic & Metal Eye Shape",
+      "originalPrice": "2599",
+      "discountPrice": "1999",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Red", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 41,
+      "name": "1122 - Plastic & Metal Round Shape",
+      "originalPrice": "2899",
+      "discountPrice": "2299",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Leopard", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    },
+    {
+      "id": 42,
+      "name": "R1013 - RimLess Eye Shape",
+      "originalPrice": "2599",
+      "discountPrice": "1999",
+      "reviews": 22,
+      "madeInTaiwan": false,
+      "discount": "15%",
+      "category": "women",
+      "gender": "Women",
+      "shape": "Round",
+      "variants": [
+        { "colorName": "Pink", "hex": "#ff69b4", "image": "./glass1.jpeg" },
+        { "colorName": "Red & Purple", "hex": "#ff69b4", "image": "./glass1.jpeg" },
+        { "colorName": "Silver & Blue", "hex": "#ff69b4", "image": "./glass1.jpeg" }
+      ]
+    }
+  ]
