@@ -5,11 +5,17 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
-// Math function to calculate 10% discount
+// Math function to calculate discount
 const applyDiscount = (originalPrice) => {
+  // If discountPrice exists in data, use that, otherwise calculate
+  if (originalPrice.discountPrice) {
+    return parseInt(originalPrice.discountPrice);
+  }
+  // Parse string price to number
+  const price = typeof originalPrice === 'string' ? parseInt(originalPrice) : originalPrice;
   const discountRate = 0.10; // 10% discount
-  const discountedPrice = originalPrice - (originalPrice * discountRate);
-  return Math.round(discountedPrice); // Round to nearest whole number
+  const discountedPrice = price - (price * discountRate);
+  return Math.round(discountedPrice);
 };
 
 const Product = () => {
@@ -25,20 +31,25 @@ const Product = () => {
     : products.filter(p => p.category === selectedCategory);
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortBy === 'price-low') return a.price - b.price;
-    if (sortBy === 'price-high') return b.price - a.price;
+    const priceA = parseInt(a.discountPrice || a.originalPrice);
+    const priceB = parseInt(b.discountPrice || b.originalPrice);
+    if (sortBy === 'price-low') return priceA - priceB;
+    if (sortBy === 'price-high') return priceB - priceA;
     if (sortBy === 'name') return a.name.localeCompare(b.name);
     return 0;
   });
 
   const handleAddToCart = (product) => {
-    const discountedPrice = applyDiscount(product.price);
-    const productWithDiscount = {
-      ...product,
-      price: discountedPrice,
-      originalPrice: product.price // Store original price for reference
+    const finalPrice = parseInt(product.discountPrice || product.originalPrice);
+    const productWithPrice = {
+      id: product.id,
+      name: product.name,
+      price: finalPrice,
+      originalPrice: parseInt(product.originalPrice),
+      category: product.category,
+      image: product.variants?.[0]?.image || './fallback.jpg'
     };
-    addToCart(productWithDiscount);
+    addToCart(productWithPrice);
     setAddedToCart(prev => ({ ...prev, [product.id]: true }));
     setTimeout(() => {
       setAddedToCart(prev => ({ ...prev, [product.id]: false }));
@@ -52,12 +63,21 @@ const Product = () => {
 
   // Format price
   const formatPrice = (price) => {
+    const numPrice = typeof price === 'string' ? parseInt(price) : price;
     return new Intl.NumberFormat('en-PK', {
       style: 'currency',
       currency: 'PKR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
-    }).format(price);
+    }).format(numPrice);
+  };
+
+  // Get product image
+  const getProductImage = (product) => {
+    if (product.variants && product.variants[0] && product.variants[0].image) {
+      return product.variants[0].image;
+    }
+    return './placeholder.jpg';
   };
 
   return (
@@ -116,20 +136,24 @@ const Product = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 md:gap-x-4 gap-y-8 md:gap-y-12">
             {sortedProducts.map(product => {
               const quantity = getItemQuantity(product.id);
-              const discountedPrice = applyDiscount(product.price);
+              const originalPriceNum = parseInt(product.originalPrice);
+              const discountedPriceNum = parseInt(product.discountPrice || applyDiscount(product.originalPrice));
+              const hasDiscount = product.discount || (product.discountPrice && product.discountPrice < product.originalPrice);
               
               return (
                 <div key={product.id} className="group flex flex-col items-center">
                   {/* Product Image Area */}
                   <Link to={`/product/${product.id}`} className="relative w-full aspect-[4/5] bg-[#F8F8F8] overflow-hidden mb-4 md:mb-6">
                     <img 
-                      src={product.mainImage} 
+                      src={getProductImage(product)} 
                       alt={product.name} 
-                      className="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-700"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
-                    <div className="absolute top-0 left-0 bg-black text-white px-2 md:px-3 py-1 md:py-1.5 text-[7px] md:text-[8px] tracking-widest font-bold">
-                      -10% OFF
-                    </div>
+                    {hasDiscount && (
+                      <div className="absolute top-0 left-0 bg-black text-white px-2 md:px-3 py-1 md:py-1.5 text-[7px] md:text-[8px] tracking-widest font-bold">
+                        {product.discount || '-10% OFF'}
+                      </div>
+                    )}
                     {quantity > 0 && (
                       <div className="absolute top-0 right-0 bg-black text-white w-5 md:w-6 h-5 md:h-6 flex items-center justify-center text-[8px] md:text-[10px] font-bold">
                         {quantity}
@@ -144,28 +168,53 @@ const Product = () => {
 
                   {/* Product Text Info */}
                   <div className="text-center px-2 flex flex-col items-center flex-grow">
-                    <p className="text-[8px] md:text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-1 md:mb-2">{product.category}</p>
+                    <p className="text-[8px] md:text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-1 md:mb-2">
+                      {product.gender || product.category}
+                    </p>
                     <Link to={`/product/${product.id}`}>
                       <h3 className="text-xs md:text-base font-serif tracking-wide text-black mb-2 md:mb-3 line-clamp-2 uppercase">
                         {product.name}
                       </h3>
                     </Link>
                     
+                    {/* Additional product details */}
+                    <div className="flex gap-2 mb-2 text-[8px] md:text-[9px] text-gray-500">
+                      {product.shape && <span>{product.shape}</span>}
+                      {product.madeInTaiwan && <span>• Made in Taiwan</span>}
+                    </div>
+                    
                     <div className="mb-4 md:mb-6">
                       <div className="flex items-center gap-2 md:gap-3">
                         <span className="text-gray-400 line-through text-[10px] md:text-xs font-light tracking-tighter italic">
-                          {formatPrice(product.price)}
+                          {formatPrice(originalPriceNum)}
                         </span>
                         <span className="text-sm md:text-base font-bold text-red-600 font-serif">
-                          {formatPrice(discountedPrice)}
+                          {formatPrice(discountedPriceNum)}
                         </span>
                       </div>
                       <div className="mt-1 md:mt-2">
                         <span className="bg-red-100 text-red-600 text-[7px] md:text-[8px] px-1.5 md:px-2 py-0.5 md:py-1 rounded font-semibold">
-                          Save {formatPrice(product.price - discountedPrice)}
+                          Save {formatPrice(originalPriceNum - discountedPriceNum)}
                         </span>
                       </div>
                     </div>
+
+                    {/* Color variants preview */}
+                    {product.variants && product.variants.length > 0 && (
+                      <div className="flex gap-1 mb-3 justify-center">
+                        {product.variants.slice(0, 3).map((variant, idx) => (
+                          <div 
+                            key={idx}
+                            className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-gray-300"
+                            style={{ backgroundColor: variant.hex === '#ffffff' ? '#f5f5f5' : variant.hex }}
+                            title={variant.colorName}
+                          />
+                        ))}
+                        {product.variants.length > 3 && (
+                          <span className="text-[6px] md:text-[7px] text-gray-400">+{product.variants.length - 3}</span>
+                        )}
+                      </div>
+                    )}
 
                     <button
                       onClick={() => handleAddToCart(product)}
@@ -177,6 +226,13 @@ const Product = () => {
                     >
                       {addedToCart[product.id] ? '✓ ADDED' : 'ADD TO CART'}
                     </button>
+                    
+                    {/* Reviews */}
+                    {product.reviews && (
+                      <div className="mt-2 text-[7px] md:text-[8px] text-gray-400">
+                        ⭐ {product.reviews} reviews
+                      </div>
+                    )}
                   </div>
                 </div>
               );

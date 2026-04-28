@@ -116,7 +116,7 @@ const Checkout = () => {
     const prescriptionItems = cartItems.filter(item => hasPrescription(item));
     const hasPrescriptionItems = prescriptionItems.length > 0;
 
-    const message = `✨ *NEW LUXURY ORDER - ZAREEN FRAGRANCE* ✨
+    const message = `✨ *NEW LUXURY ORDER - IQRA OPTICAL* ✨
     
 👤 *Client Details:*
 • Name: ${formData.name}
@@ -136,7 +136,7 @@ ${hasPrescriptionItems ? `\n👓 *Prescription Items: ${prescriptionItems.length
 
 ⏰ Order Time: ${new Date().toLocaleString('en-PK', { timeZone: 'Asia/Karachi' })}
 
-Thank you for choosing Zareen. We will confirm your order shortly.`;
+Thank you for choosing IQRA OPTICAL. We will confirm your order shortly.`;
 
     const phoneNumber = '923711191925'; // Replace with your actual WhatsApp number
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;

@@ -66,7 +66,7 @@ const Cart = () => {
   const grandTotal = discountedTotal + shippingCost;
 
   const handlePromoApply = () => {
-    if (promoCode.toUpperCase() === 'ZAREEN10') {
+    if (promoCode.toUpperCase() === 'IQRA10') {
       setPromoApplied(true);
       setPromoError('');
     } else {

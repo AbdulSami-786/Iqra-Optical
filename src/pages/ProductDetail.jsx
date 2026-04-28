@@ -7,6 +7,7 @@ import { useState } from 'react';
 const getProductImages = (product) => {
   if (!product) return [];
   if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+    
     return product.images;
   }
   if (product.variants && product.variants.length > 0) {
@@ -228,16 +229,17 @@ const ProductDetail = () => {
               <div className="hidden lg:flex flex-col gap-2 w-20">
                 {images.map((img, index) => (
                   <div 
-                    key={index}
-                    className={`border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
-                      selectedImage === index 
-                        ? 'border-black' 
-                        : 'border-transparent hover:border-gray-300'
-                    }`}
-                    onClick={() => setSelectedImage(index)}
+                  key={index}
+                  className={`border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
+                    selectedImage === index 
+                    ? 'border-black' 
+                    : 'border-transparent hover:border-gray-300'
+                  }`}
+                  onClick={() => setSelectedImage(index)}
                   >
+                  {console.log(img)}
                     <img 
-                      src={img} 
+                      src={`.${img}`} 
                       alt={`${product.name} - View ${index + 1}`}
                       className="w-full h-20 object-cover"
                       onError={(e) => {
@@ -257,8 +259,9 @@ const ProductDetail = () => {
               onTouchEnd={images.length > 1 ? handleTouchEnd : undefined}
             >
               <div className="border border-gray-100 overflow-hidden bg-gray-50">
+              {console.log(images[selectedImage])}
                 <img 
-                  src={images[selectedImage]} 
+                  src={`.${images[selectedImage]}`} 
                   alt={product.name} 
                   className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700"
                   onError={(e) => {
@@ -576,7 +579,7 @@ const ProductDetail = () => {
                   >
                     <div className="overflow-hidden bg-gray-50 aspect-square">
                       <img 
-                        src={relatedImage} 
+                        src={`.${relatedImage}`} 
                         alt={relatedProduct.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         onError={(e) => {

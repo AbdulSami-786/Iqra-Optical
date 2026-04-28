@@ -38,7 +38,7 @@ const About = () => {
       <div className="relative h-[60vh] flex items-center justify-center bg-black overflow-hidden">
         <div className="absolute inset-0 opacity-50">
           <img 
-            src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=1600&q=80" 
+            src="./b1.jpg" 
             className="w-full h-full object-cover" 
             alt="Fragrance Diffuser"
           />

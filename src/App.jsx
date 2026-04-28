@@ -29,9 +29,9 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" onClick={closeMenu} className="inline-block group">
               <h1 className="text-2xl md:text-4xl font-serif tracking-[0.1em] font-bold text-black uppercase leading-none">
-                Zareen
+                IQRA
                 <span className="block text-[8px] md:text-[10px] tracking-[0.6em] font-light mt-1 text-gray-500 group-hover:text-black transition-colors uppercase">
-                  Fragrance
+                  Optical
                 </span>
               </h1>
             </Link>
@@ -84,7 +84,7 @@ const Footer = () => {
           
           {/* Column 1: Brand Info */}
           <div className="space-y-6">
-            <h3 className="text-xl font-serif font-bold uppercase tracking-tighter">Zareen</h3>
+            <h3 className="text-xl font-serif font-bold uppercase tracking-tighter">IQRA</h3>
             <p className="text-xs text-gray-500 leading-relaxed tracking-wider uppercase">
               Premium inspired fragrances crafted with the highest quality ingredients to last all day.
             </p>
@@ -129,7 +129,7 @@ const Footer = () => {
             <div className="text-[10px] text-gray-500 space-y-3 uppercase tracking-widest leading-loose">
               <p>Karachi, Pakistan</p>
               <p>WhatsApp: +92 371 1191925</p>
-              <p>Email: zareenfragrances@gmail.com</p>
+              <p>Email: IqraOptical@gmail.com</p>
             </div>
           </div>
         </div>
@@ -137,7 +137,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-[9px] text-gray-400 uppercase tracking-[0.2em]">
-            © 2026 Zareen Fragrance. All Rights Reserved.
+            © 2026 Iqra Optical. All Rights Reserved.
           </p>
           <div className="flex space-x-2 grayscale opacity-50">
             {/* Simple placeholder icons for payment methods */}
