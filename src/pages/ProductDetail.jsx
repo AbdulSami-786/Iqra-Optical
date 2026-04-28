@@ -9,6 +9,7 @@ const getProductImages = (product) => {
   
   // If product has images array
   if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+    
     return product.images;
   }
   
@@ -260,9 +261,60 @@ const ProductDetail = () => {
 
         <div className="flex flex-col lg:flex-row gap-6 sm:gap-12">
           {/* Left: Product Images */}
+<<<<<<< HEAD
           <div className="lg:w-1/2">
             <div className="flex gap-4">
               {/* Thumbnail Gallery - Desktop */}
+=======
+          <div className="lg:w-1/2 flex gap-4">
+            {/* Thumbnail Gallery */}
+            {images.length > 1 && (
+              <div className="hidden lg:flex flex-col gap-2 w-20">
+                {images.map((img, index) => (
+                  <div 
+                  key={index}
+                  className={`border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
+                    selectedImage === index 
+                    ? 'border-black' 
+                    : 'border-transparent hover:border-gray-300'
+                  }`}
+                  onClick={() => setSelectedImage(index)}
+                  >
+                  {console.log(img)}
+                    <img 
+                      src={`.${img}`} 
+                      alt={`${product.name} - View ${index + 1}`}
+                      className="w-full h-20 object-cover"
+                      onError={(e) => {
+                        e.target.src = '/placeholder.jpg';
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Main Image Display */}
+            <div 
+              className="flex-1"
+              onTouchStart={images.length > 1 ? handleTouchStart : undefined}
+              onTouchMove={images.length > 1 ? handleTouchMove : undefined}
+              onTouchEnd={images.length > 1 ? handleTouchEnd : undefined}
+            >
+              <div className="border border-gray-100 overflow-hidden bg-gray-50">
+              {console.log(images[selectedImage])}
+                <img 
+                  src={`.${images[selectedImage]}`} 
+                  alt={product.name} 
+                  className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700"
+                  onError={(e) => {
+                    e.target.src = '/placeholder.jpg';
+                  }}
+                />
+              </div>
+              
+              {/* Mobile Image Dots */}
+>>>>>>> e114d39a13a2e56b1a6269fa4098325480d63b13
               {images.length > 1 && (
                 <div className="hidden lg:flex flex-col gap-2 w-20">
                   {images.map((img, index) => (
@@ -621,7 +673,7 @@ const ProductDetail = () => {
                   >
                     <div className="overflow-hidden bg-gray-50 aspect-square">
                       <img 
-                        src={relatedImage} 
+                        src={`.${relatedImage}`} 
                         alt={relatedProduct.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         onError={(e) => {
