@@ -42,7 +42,7 @@ const About = () => {
             className="w-full h-full object-cover" 
             alt="Fragrance Diffuser"
           />
-        </div>
+        </div>k
         <div className="relative z-10 text-center px-4">
           <h2 className="text-[10px] tracking-[0.5em] text-white uppercase mb-4 font-bold">ESTABLISHED MARCH 1, 2026</h2>
           <h1 className="text-5xl md:text-7xl font-serif italic text-white mb-6">Our Story</h1>

@@ -332,7 +332,7 @@ const Cart = () => {
               <div className="mt-10 flex justify-center gap-6 opacity-20 grayscale">
                 <span className="text-xs uppercase tracking-tighter font-bold">Secure</span>
                 <span className="text-xs uppercase tracking-tighter font-bold">Authentic</span>
-                <span className="text-xs uppercase tracking-tighter font-bold">Premium</span>
+                <span className="text-xs uppercase tracking-tighter font-bold">Premiumk</span>
               </div>
             </div>
           </div>

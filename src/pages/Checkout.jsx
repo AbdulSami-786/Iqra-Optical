@@ -159,7 +159,7 @@ Thank you for choosing IQRA OPTICAL. We will confirm your order shortly.`;
       {/* 1. Refined Header */}
       <div className="bg-white border-b border-gray-100">
         <div className="container mx-auto px-4 py-12 text-center">
-          <h1 className="text-3xl font-serif italic tracking-widest uppercase">Checkout</h1>
+          <h1 className="text-3xl font-serif italic tracking-widest uppercase">Checkoutk</h1>
           <div className="w-12 h-px bg-black mx-auto mt-4"></div>
         </div>
       </div>

@@ -36,7 +36,7 @@ export const products = [
       "id": 3,
       "name": "806271 - Plastic Oval Shape ",
       "originalPrice": "2000",
-      "discountPrice": "1499",
+      "discountPrice": "1490",
       "reviews": 8,
       "madeInTaiwan": true,
       "discount": "15%",

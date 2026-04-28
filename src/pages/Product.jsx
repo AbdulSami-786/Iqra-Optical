@@ -230,7 +230,7 @@ const Product = () => {
                     {/* Reviews */}
                     {product.reviews && (
                       <div className="mt-2 text-[7px] md:text-[8px] text-gray-400">
-                        ⭐ {product.reviews} reviews
+                        ⭐ {product.reviews} reviewsk
                       </div>
                     )}
                   </div>

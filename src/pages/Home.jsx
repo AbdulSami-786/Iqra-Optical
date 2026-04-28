@@ -428,7 +428,7 @@ const Home = () => {
             <Link to="/contact" className="hover:text-gray-400 transition">CONTACT</Link>
           </div>
           <p className="text-gray-500 text-[10px] tracking-widest">
-            © {new Date().getFullYear()} IQRA OPTICAL | CRAFTED FOR ELEGANCE
+            © {new Date().getFullYear()} IQRA OPTICALk | CRAFTED FOR ELEGANCE
           </p>
         </div>
       </footer>

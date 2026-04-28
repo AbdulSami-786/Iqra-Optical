@@ -50,7 +50,7 @@ const Contact = () => {
               <Mail size={30} strokeWidth={1} />
             </div>
             <h3 className="text-xs tracking-[0.3em] font-bold uppercase mb-3">Digital Inquiries</h3>
-            <p className="text-sm font-serif italic mb-1">zareenfragrances@gmail.com</p>
+            <p className="text-sm font-serif italic mb-1">zareenfragrances@gmail.comk</p>
             <p className="text-[10px] text-gray-400 tracking-widest uppercase">24/7 Response Time</p>
           </div>
           

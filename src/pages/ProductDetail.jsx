@@ -592,7 +592,7 @@ const ProductDetail = () => {
                       <p className="text-red-600 text-[11px] sm:text-sm font-bold">{formatPrice(relatedDiscountedPrice)}</p>
                       <p className="text-gray-400 text-[10px] sm:text-xs line-through">{formatPrice(relatedOriginalPrice)}</p>
                     </div>
-                    <span className="text-green-600 text-[10px] sm:text-xs font-semibold">-{relatedDiscountPercent} OFF</span>
+                    <span className="text-green-600 text-[10px] sm:text-xs font-semibold">-{relatedDiscountPercent} OFFk</span>
                   </div>
                 );
               })}
