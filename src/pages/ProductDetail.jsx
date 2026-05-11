@@ -277,7 +277,7 @@ const ProductDetail = () => {
                       onClick={() => setSelectedImage(index)}
                     >
                       <img 
-                        src={img} 
+                        src={`.${img}`} 
                         alt={`${product.name} - View ${index + 1}`}
                         className="w-full h-20 object-cover"
                         onError={(e) => {
@@ -298,7 +298,7 @@ const ProductDetail = () => {
               >
                 <div className="border border-gray-100 overflow-hidden bg-gray-50">
                   <img 
-                    src={images[selectedImage] || '/placeholder.jpg'} 
+                    src={`.${images[selectedImage]}` || '/placeholder.jpg'} 
                     alt={product.name} 
                     className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700"
                     onError={(e) => {

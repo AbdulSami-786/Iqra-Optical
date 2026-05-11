@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { CartProvider, useCart } from './context/CartContext';
 import { Menu, X, ShoppingBag, Search, Send } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa';
+import Loader from './components/Loader'; // Import the loader
 
 import Home from './pages/Home';
 import About from './pages/About';
@@ -75,14 +76,12 @@ const Navbar = () => {
   );
 };
 
-/* --- NEW FOOTER COMPONENT --- */
 const Footer = () => {
   return (
     <footer className="bg-[#f8f8f6] border-t border-gray-200 pt-16 pb-8 mt-20">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           
-          {/* Column 1: Brand Info */}
           <div className="space-y-6">
             <h3 className="text-xl font-serif font-bold uppercase tracking-tighter">IQRA</h3>
             <p className="text-xs text-gray-500 leading-relaxed tracking-wider uppercase">
@@ -95,7 +94,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Column 2: Quick Links */}
           <div>
             <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] mb-6">Information</h4>
             <ul className="text-[10px] space-y-3 uppercase tracking-widest text-gray-500">
@@ -107,7 +105,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 3: Newsletter */}
           <div>
             <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] mb-6">Newsletter</h4>
             <p className="text-[10px] text-gray-500 mb-4 uppercase tracking-widest">Subscribe to receive updates and access to exclusive deals.</p>
@@ -123,7 +120,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Column 4: Contact */}
           <div>
             <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] mb-6">Get in Touch</h4>
             <div className="text-[10px] text-gray-500 space-y-3 uppercase tracking-widest leading-loose">
@@ -134,13 +130,11 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-[9px] text-gray-400 uppercase tracking-[0.2em]">
             © 2026 Iqra Optical. All Rights Reserved.
           </p>
           <div className="flex space-x-2 grayscale opacity-50">
-            {/* Simple placeholder icons for payment methods */}
             <div className="h-4 w-6 bg-gray-400 rounded-sm"></div>
             <div className="h-4 w-6 bg-gray-400 rounded-sm"></div>
             <div className="h-4 w-6 bg-gray-400 rounded-sm"></div>
@@ -152,10 +146,17 @@ const Footer = () => {
 };
 
 function App() {
+  const [showLoader, setShowLoader] = useState(true);
+
+  const handleLoaderComplete = () => {
+    setShowLoader(false);
+  };
+
   return (
     <CartProvider>
       <BrowserRouter>
-        <div className="flex flex-col min-h-screen">
+        {showLoader && <Loader onLoadingComplete={handleLoaderComplete} />}
+        <div className={`flex flex-col min-h-screen transition-opacity duration-500 ${showLoader ? 'opacity-0' : 'opacity-100'}`}>
           <Navbar />
           <main className="flex-grow">
             <Routes>
@@ -168,7 +169,7 @@ function App() {
               <Route path="/checkout" element={<Checkout />} />
             </Routes>
           </main>
-          <Footer /> {/* Added Footer here */}
+          <Footer />
         </div>
       </BrowserRouter>
     </CartProvider>

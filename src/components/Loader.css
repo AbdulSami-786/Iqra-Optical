@@ -1,0 +1,594 @@
+/* ═══════════════════════════════════════════════════════════
+   IQRA OPTICS  —  CINEMATIC LOADER  v4
+   Theme:  High-End Tech Boot  ·  Clarity over chaos
+   Feel:   Apple Vision Pro  ×  Tesla boot  ×  Orbital depth
+
+   Architecture notes:
+   • All animation uses transform + opacity only (no layout props)
+   • will-change applied surgically — not everywhere
+   • A shared easing library keeps all motion coherent
+   • Logo uses two-layer DOM: flight path + breathing are separate
+   • Matrix rain throttled to ~20 draws/sec on a 60fps compositor
+═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap');
+
+/* ─── Design tokens ──────────────────────────────────────── */
+:root {
+  --fire:         #e8440a;
+  --fire2:        #ff6a1a;
+  --fire3:        #ffb347;
+  --deep:         #080810;
+
+  /* Glow values pre-computed so box-shadow strings are compact */
+  --glow-med:     rgba(232, 68, 10, 0.42);
+  --glow-dim:     rgba(232, 68, 10, 0.14);
+  --glow-ring:    rgba(232, 68, 10, 0.35);
+
+  /* ─── Easing library ───────────────────────────────────── */
+  /* Natural deceleration — used for entrances */
+  --ease-out-expo:    cubic-bezier(0.16, 1, 0.3, 1);
+  /* Deceleration with slight overshoot — cinematic settle */
+  --ease-out-back:    cubic-bezier(0.22, 1.22, 0.36, 1);
+  /* Symmetrical S-curve — breathing, pulses */
+  --ease-in-out-sine: cubic-bezier(0.37, 0, 0.63, 1);
+  /* Hard exit  */
+  --ease-in-expo:     cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   OVERLAY
+═══════════════════════════════════════════════════════════ */
+.ldr {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--deep);
+  overflow: hidden;
+  /* Promote to compositor layer immediately */
+  will-change: opacity, transform, filter;
+}
+
+/* Subtle perspective grid — depth cue, never a distraction */
+.ldr::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(232, 68, 10, 0.038) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 68, 10, 0.038) 1px, transparent 1px);
+  background-size: 62px 62px;
+  animation: gridDrift 14s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes gridDrift {
+  from { background-position: 0 0; }
+  to   { background-position: 62px 62px; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   EXIT ANIMATION
+   Elegant collapse — not an explosion.
+   Contract slightly, brightness spike, then fade out.
+═══════════════════════════════════════════════════════════ */
+.ldr-exit {
+  animation: elegantOut 0.70s var(--ease-in-expo) forwards;
+}
+
+@keyframes elegantOut {
+  0%   { opacity: 1; transform: scale(1);    filter: brightness(1)   blur(0px); }
+  35%  { opacity: 1; transform: scale(1.03); filter: brightness(1.6) blur(0px); }
+  100% { opacity: 0; transform: scale(0.96); filter: brightness(0)   blur(6px); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   DEPTH LAYERS — establishes the Z hierarchy
+═══════════════════════════════════════════════════════════ */
+
+/* Vignette: dark edges pull focus to center */
+.ldr-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 68% 68% at 50% 50%,
+    transparent 35%,
+    rgba(8, 8, 16, 0.55) 72%,
+    rgba(8, 8, 16, 0.88) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Warm radial plate — logo's atmospheric halo */
+.ldr-radial {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(232, 68, 10, 0.09) 0%,
+    rgba(232, 68, 10, 0.04) 45%,
+    transparent 72%
+  );
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  animation: radialIn 1.4s var(--ease-out-expo) 0.6s both;
+}
+
+@keyframes radialIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   SCENE  —  3-D perspective container
+   perspective value: 1100px gives natural-feeling depth
+   without exaggerating the rotateY on the logo entry.
+═══════════════════════════════════════════════════════════ */
+.ldr-scene {
+  position: relative;
+  z-index: 3;
+  width: 320px;
+  height: 320px;
+  perspective: 1100px;
+  perspective-origin: center center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   ORBITAL RINGS
+   Two-depth system:
+   · .orb-depth  =  background rings  (blurred, dim)
+   · plain .orb  =  foreground rings  (crisp, sharp)
+═══════════════════════════════════════════════════════════ */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+/* Background rings: blurred = perceived distance */
+.orb-depth {
+  filter: blur(1.8px);
+  opacity: 0.28;
+}
+
+/* Ring 1 — largest, slowest, most prominent */
+.orb-1 {
+  width: 286px;
+  height: 286px;
+  border: 1.5px solid transparent;
+  border-top-color:    var(--fire);
+  border-bottom-color: var(--fire2);
+  /* Single dim shadow — no heavy glow spam */
+  box-shadow: 0 0 6px rgba(232, 68, 10, 0.18);
+  animation: orbCW 6.5s linear infinite;
+}
+
+/* Ring 2 — mid, reversed */
+.orb-2 {
+  width: 248px;
+  height: 248px;
+  border: 1.5px solid transparent;
+  border-top-color: var(--fire2);
+  animation: orbCCW 9s linear infinite;
+}
+
+/* Ring 3 — inner accent, very subtle */
+.orb-3 {
+  width: 208px;
+  height: 208px;
+  border: 1px solid transparent;
+  border-top-color: rgba(255, 179, 71, 0.55);
+  animation: orbCW 12s linear infinite;
+  opacity: 0.45;
+}
+
+/* Equatorial ghost ring — structural, barely there */
+.orb-eq {
+  width: 276px;
+  height: 276px;
+  border: 1px solid rgba(232, 68, 10, 0.12);
+  border-top-color:    transparent;
+  border-bottom-color: transparent;
+  animation: orbCCW 18s linear infinite;
+}
+
+/* All rings share the same rotateX tilt — 68° for perspective look */
+@keyframes orbCW {
+  from { transform: rotateX(68deg) rotateZ(0deg); }
+  to   { transform: rotateX(68deg) rotateZ(360deg); }
+}
+@keyframes orbCCW {
+  from { transform: rotateX(68deg) rotateZ(0deg); }
+  to   { transform: rotateX(68deg) rotateZ(-360deg); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   ORBITING DOT
+   Follows ring-1 exactly — transform-origin matches ring radius.
+═══════════════════════════════════════════════════════════ */
+.orb-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--fire3);
+  box-shadow: 0 0 10px 3px rgba(232, 68, 10, 0.55);
+  transform-origin: -139px 0; /* ring-1 radius = 286/2 = 143, minus dot center = ~139 */
+  animation: orbCW 6.5s linear infinite;
+  will-change: transform;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   SCANLINE  —  single crisp horizontal streak
+═══════════════════════════════════════════════════════════ */
+.scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(232, 68, 10, 0.45) 38%,
+    rgba(255, 200, 100, 0.75) 50%,
+    rgba(232, 68, 10, 0.45) 62%,
+    transparent 100%
+  );
+  filter: blur(0.8px);
+  opacity: 0;
+  top: 0;
+  z-index: 4;
+  pointer-events: none;
+  animation: scanSweep 2.8s var(--ease-in-out-sine) infinite;
+}
+
+@keyframes scanSweep {
+  0%   { top: -2px; opacity: 0; }
+  6%   { opacity: 0.55; }
+  94%  { opacity: 0.35; }
+  100% { top: 100%; opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   LOGO  —  two-layer structure for clean animation separation
+═══════════════════════════════════════════════════════════ */
+
+/*
+   TRACK: owns the cinematic 3-D flight path.
+   translateX(-55vw): pushes logo well off-screen left
+   rotateY(42deg):    3-D tilt from scene's perspective camera
+   scale(0.82):       slightly smaller at the start of flight
+   filter blur+dark:  feels far away, comes into focus on arrival
+
+   Easing: var(--ease-out-back) → natural deceleration with
+   a ~3% overshoot past center, then settles back perfectly.
+   This micro-overshoot is what makes it feel "physical."
+
+   fill-mode: both → applies FROM state before delay starts
+   (prevents FOUC where logo briefly appears at center).
+*/
+.ldr-logo-track {
+  position: relative;
+  z-index: 20;
+  will-change: transform, filter, opacity;
+  animation: logoCinematicEntry 1.10s var(--ease-out-back) 0.30s both;
+}
+
+@keyframes logoCinematicEntry {
+  0% {
+    transform:  translateX(-55vw) rotateY(42deg) scale(0.82);
+    filter:     blur(14px) brightness(0.30);
+    opacity:    0;
+  }
+  14% {
+    opacity:    0.85;
+    filter:     blur(8px)  brightness(0.58);
+  }
+  60% {
+    filter:     blur(2px)  brightness(0.90);
+  }
+  100% {
+    transform:  translateX(0) rotateY(0deg) scale(1);
+    filter:     blur(0)    brightness(1);
+    opacity:    1;
+  }
+}
+
+/*
+   WRAP: owns the circle container, glow ring, and breathing scale.
+   Kept separate from TRACK so both can animate transform
+   without one overriding the other.
+*/
+.ldr-logo-wrap {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  overflow: hidden;
+  /* Hair-thin precision border — crisp, not a glow blob */
+  outline:        1.5px solid rgba(232, 68, 10, 0.28);
+  outline-offset: 4px;
+  will-change: transform;
+}
+
+/* Live state: breathing scale + single precise glow ring */
+.ldr-logo-live {
+  box-shadow:
+    0 0 0 1.5px rgba(232, 68, 10, 0.38),
+    0 0 22px  5px rgba(232, 68, 10, 0.16);
+  animation: logoBreathe 3.4s var(--ease-in-out-sine) infinite;
+}
+
+/*
+   Breathe: scale 1 → 1.024 — imperceptible at a glance,
+   but subconsciously alive. The glow expands in sync.
+*/
+@keyframes logoBreathe {
+  0%, 100% {
+    transform:  scale(1);
+    box-shadow: 0 0 0 1.5px rgba(232,68,10,0.35), 0 0 18px  4px rgba(232,68,10,0.14);
+  }
+  50% {
+    transform:  scale(1.024);
+    box-shadow: 0 0 0 1.5px rgba(232,68,10,0.55), 0 0 30px  8px rgba(232,68,10,0.24);
+  }
+}
+
+/* Logo image — always pixel-sharp, no transform applied directly */
+.ldr-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  /* Prevent browser from re-rendering on parent animation */
+  backface-visibility: hidden;
+}
+
+/*
+   GLITCH: fires once 0.15s after live phase begins (~1.8s absolute).
+   Two layers (::before red-shifted, ::after blue-shifted) appear
+   for ~280ms total — a single digital artifact moment, not noise.
+   Uses forwards fill so it never replays.
+*/
+.ldr-logo-live::before,
+.ldr-logo-live::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/logo.png') center / cover no-repeat;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ldr-logo-live::before {
+  animation: glitchOnce 0.28s 0.15s ease-out forwards;
+  /* Red channel nudge */
+  filter: hue-rotate(-25deg) saturate(1.4);
+}
+.ldr-logo-live::after {
+  animation: glitchOnce 0.28s 0.22s ease-out forwards;
+  /* Blue channel nudge */
+  filter: hue-rotate(160deg) saturate(1.2);
+}
+
+@keyframes glitchOnce {
+  0%   { opacity: 0; transform: translate(0); }
+  20%  { opacity: 0.55; transform: translate(-3px,  1px); clip-path: inset(22% 0 52% 0); }
+  55%  { opacity: 0.40; transform: translate( 2px, -1px); clip-path: inset(58% 0 12% 0); }
+  100% { opacity: 0; transform: translate(0); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   SPARKS  —  two timed waves, each fires once (forwards)
+═══════════════════════════════════════════════════════════ */
+.spark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(0.8px);
+  will-change: transform, opacity;
+  /* forwards = sparks don't loop after their wave completes */
+  animation: sparkFly var(--dur) var(--delay) var(--ease-out-expo) forwards;
+}
+
+@keyframes sparkFly {
+  0%   {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0) scale(1.2);
+  }
+  10%  { opacity: 0.9; }
+  65%  { opacity: 0.35; }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--dist)) scale(0);
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   PULSE RINGS  —  expand outward like energy ripples
+═══════════════════════════════════════════════════════════ */
+.pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 110px;
+  height: 110px;
+  margin: -55px 0 0 -55px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 68, 10, 0.50);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: pulseExpand var(--pdur) var(--pdelay) var(--ease-out-expo) infinite;
+}
+
+@keyframes pulseExpand {
+  0%   { transform: scale(0.80); opacity: 0.70; border-color: rgba(232,68,10,0.50); }
+  100% { transform: scale(2.90); opacity: 0;    border-color: rgba(232,68,10,0); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   CORNER BRACKETS  —  HUD framing device
+═══════════════════════════════════════════════════════════ */
+.corner {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-color: rgba(232, 68, 10, 0.60);
+  border-style: solid;
+  opacity: 0;
+  animation: cornerIn 0.65s var(--ease-out-expo) forwards;
+}
+
+.corner-tl { top: 22px;    left: 22px;    border-width: 1.5px 0 0 1.5px; animation-delay: 0.28s; }
+.corner-tr { top: 22px;    right: 22px;   border-width: 1.5px 1.5px 0 0; animation-delay: 0.36s; }
+.corner-bl { bottom: 22px; left: 22px;    border-width: 0 0 1.5px 1.5px; animation-delay: 0.44s; }
+.corner-br { bottom: 22px; right: 22px;   border-width: 0 1.5px 1.5px 0; animation-delay: 0.52s; }
+
+@keyframes cornerIn {
+  from { opacity: 0; transform: scale(0.55); }
+  to   { opacity: 0.72; transform: scale(1); }
+}
+
+/* Accent dot at each corner's inner vertex */
+.corner::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--fire3);
+  border-radius: 50%;
+  box-shadow: 0 0 6px 2px rgba(232, 68, 10, 0.7);
+}
+.corner-tl::after { top: -2px; left: -2px; }
+.corner-tr::after { top: -2px; right: -2px; }
+.corner-bl::after { bottom: -2px; left: -2px; }
+.corner-br::after { bottom: -2px; right: -2px; }
+
+
+/* ═══════════════════════════════════════════════════════════
+   HUD TEXT
+═══════════════════════════════════════════════════════════ */
+.ldr-hud {
+  position: absolute;
+  bottom: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 0.22em;
+  white-space: nowrap;
+  z-index: 10;
+  opacity: 0;
+  animation: hudIn 0.9s var(--ease-out-expo) 1.20s both;
+}
+
+@keyframes hudIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.ldr-brand {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fire2);
+  text-shadow: 0 0 14px rgba(232, 68, 10, 0.48);
+  text-transform: uppercase;
+  /* Intentionally NO flicker — steady = premium */
+}
+
+.ldr-sub {
+  font-size: 7.5px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.20);
+  letter-spacing: 0.40em;
+  margin-top: 6px;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════════════════════════════ */
+.ldr-bar-wrap {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  opacity: 0;
+  animation: hudIn 0.9s var(--ease-out-expo) 1.36s both;
+}
+
+.ldr-bar-track {
+  width: 160px;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.ldr-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--fire), var(--fire3));
+  border-radius: 99px;
+  box-shadow: 0 0 7px rgba(232, 68, 10, 0.50);
+  width: 0%;
+  will-change: width;
+  /*
+     Easing: starts fast (system "booting") then slows
+     near 90% (waiting for final check) then snaps to 100%.
+     Uses ease-out-expo so even the last 10% feels swift.
+  */
+  animation: barLoad 2.2s var(--ease-out-expo) 1.50s both;
+}
+
+@keyframes barLoad {
+  0%   { width: 0%;   }
+  28%  { width: 48%;  }
+  60%  { width: 74%;  }
+  88%  { width: 92%;  }
+  100% { width: 100%; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   MATRIX CANVAS  —  deepest layer, very low opacity
+═══════════════════════════════════════════════════════════ */
+.ldr-matrix {
+  position: absolute;
+  inset: 0;
+  opacity: 0.09;   /* atmospheric texture — not readable as characters */
+  pointer-events: none;
+  z-index: 0;
+}
