@@ -1,211 +1,221 @@
-import React, { useEffect, useRef, useState } from 'react';
-import './Loader.css';
+// import React, { useState, useEffect } from 'react';
 
-/* ─────────────────────────────────────────────────────────
-   MATRIX RAIN  — subtle atmosphere, never a distraction.
-   Throttled to 1 draw per 3 rAF ticks (~20fps visual refresh
-   at 60fps compositor) so the canvas stays cheap.
-───────────────────────────────────────────────────────── */
-function MatrixCanvas() {
-  const canvasRef = useRef(null);
+// const PageLoader = () => {
+//   const [visible, setVisible] = useState(true);
+//   const [exiting, setExiting] = useState(false);
+
+//   useEffect(() => {
+//     const exitTimer = setTimeout(() => setExiting(true), 2000);
+//     const hideTimer = setTimeout(() => setVisible(false), 2900);
+//     return () => {
+//       clearTimeout(exitTimer);
+//       clearTimeout(hideTimer);
+//     };
+//   }, []);
+
+//   if (!visible) return null;
+
+//   return (
+//     <div style={{
+//       position: 'fixed', inset: 0, background: '#000',
+//       display: 'flex', alignItems: 'center', justifyContent: 'center',
+//       zIndex: 9999, overflow: 'hidden',
+//       transform: exiting ? 'translateX(-100%)' : 'translateX(0)',
+//       transition: exiting ? 'transform 0.85s cubic-bezier(0.76, 0, 0.24, 1)' : 'none',
+//     }}>
+//       <style>{`
+//         @keyframes spinIn {
+//           from { opacity:0; transform: rotate(-360deg) scale(0.3); }
+//           to   { opacity:1; transform: rotate(0deg) scale(1); }
+//         }
+//         @keyframes rotateSpin {
+//           from { transform: rotate(0deg); }
+//           to   { transform: rotate(360deg); }
+//         }
+//         @keyframes fadeUp {
+//           from { opacity:0; transform: translateY(6px); }
+//           to   { opacity:1; transform: translateY(0); }
+//         }
+//         @keyframes progressFill {
+//           0%   { width: 0%; }
+//           60%  { width: 70%; }
+//           100% { width: 100%; }
+//         }
+//         .loader-ring { animation: rotateSpin 1.4s linear infinite; }
+//         .loader-logo-img { animation: spinIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; opacity:0; }
+//         .loader-sub { animation: fadeUp 0.5s ease-out 0.7s forwards; opacity:0; }
+//         .loader-bar-wrap { animation: fadeUp 0.3s ease-out 0.5s forwards; opacity:0; }
+//         .loader-bar-fill { animation: progressFill 1.8s cubic-bezier(0.4,0,0.2,1) 0.5s forwards; }
+//       `}</style>
+
+//       <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'8px' }}>
+
+//         {/* Ring + Logo Image */}
+//         <div style={{ position:'relative', width:'130px', height:'130px', display:'flex', alignItems:'center', justifyContent:'center' }}>
+
+//           {/* Rotating ring */}
+//           <svg className="loader-ring" style={{ position:'absolute', inset:0, width:'100%', height:'100%' }} viewBox="0 0 130 130">
+//             <circle fill="none" stroke="#333" strokeWidth="1.5" cx="65" cy="65" r="58"/>
+//             <circle fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"
+//               strokeDasharray="90 220" cx="65" cy="65" r="58"/>
+//           </svg>
+
+//           {/* Logo image */}
+//           <img
+//             className="loader-logo-img"
+//             src="/iqra.jpeg"
+//             alt="IQRA Optical"
+//             style={{ width:'80px', height:'80px', objectFit:'contain', borderRadius:'50%',background:'#fff'}}
+//           />
+//         </div>
+
+//         {/* Optical text */}
+//         <span className="loader-sub" style={{
+//           fontSize:'8px', letterSpacing:'0.6em', color:'#666',
+//           textTransform:'uppercase', fontWeight:'300', fontFamily:'sans-serif'
+//         }}>
+//           Optical
+//         </span>
+
+//         {/* Progress bar */}
+//         <div className="loader-bar-wrap" style={{ width:'120px', height:'1px', background:'#333', marginTop:'20px', overflow:'hidden' }}>
+//           <div className="loader-bar-fill" style={{ height:'100%', background:'#fff', width:'0%' }}/>
+//         </div>
+
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default PageLoader;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useState, useEffect } from 'react';
+
+const PageLoader = () => {
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    // 3.5s tak loader dikhega (animation ke khatam hone tak)
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 3500);
 
-    let raf;
-    let frame = 0;
-    const W = (canvas.width  = window.innerWidth);
-    const H = (canvas.height = window.innerHeight);
-    const FONT = 13;
-    const COLS = Math.floor(W / FONT);
-    /* Staggered starts — avoids "wall of rain" burst on load */
-    const drops = Array.from({ length: COLS }, () => Math.random() * -H * 2);
-    const chars  = 'IQRAOPTICS01アイウエオカキクケコ@#$~';
-
-    function draw() {
-      frame++;
-      if (frame % 3 === 0) {
-        ctx.fillStyle = 'rgba(8, 8, 16, 0.20)';
-        ctx.fillRect(0, 0, W, H);
-        ctx.font = `${FONT}px monospace`;
-
-        drops.forEach((y, i) => {
-          const ch = chars[Math.floor(Math.random() * chars.length)];
-          ctx.fillStyle = '#e8440a';
-          ctx.globalAlpha = Math.random() * 0.22 + 0.05;
-          ctx.fillText(ch, i * FONT, y);
-          ctx.globalAlpha = 1;
-          drops[i] = y > H + FONT * 8
-            ? -FONT * (8 + Math.random() * 22)
-            : y + FONT;
-        });
-      }
-      raf = requestAnimationFrame(draw);
-    }
-
-    draw();
-    return () => cancelAnimationFrame(raf);
+    return () => clearTimeout(timer);
   }, []);
 
-  return <canvas ref={canvasRef} className="ldr-matrix" />;
-}
-
-/* ─────────────────────────────────────────────────────────
-   SPARKS  — 12 particles in two choreographed waves.
-   Wave A (i<6):  fires at ~1.55s alongside logo landing.
-   Wave B (i>=6): fires at ~2.40s as a secondary beat.
-   Uses animation-fill-mode: forwards so they don't loop.
-───────────────────────────────────────────────────────── */
-const SPARKS = Array.from({ length: 12 }, (_, i) => ({
-  angle: `${i * 30}deg`,
-  dist:  `${68 + (i % 3) * 20}px`,
-  dur:   `${1.9 + (i % 4) * 0.28}s`,
-  delay: i < 6
-    ? `${1.55 + i * 0.04}s`
-    : `${2.40 + (i - 6) * 0.04}s`,
-  size:  i % 3 === 0 ? 4 : 2,
-  color: i % 2 === 0 ? '#e8440a' : '#ff6a1a',
-}));
-
-/* ─────────────────────────────────────────────────────────
-   PULSE RINGS  — exactly 2, one pair per breath cycle.
-───────────────────────────────────────────────────────── */
-const PULSES = [
-  { dur: '2.8s', delay: '1.55s' },
-  { dur: '2.8s', delay: '2.35s' },
-];
-
-/* ═══════════════════════════════════════════════════════
-   LOADER
-   Phase timeline (absolute ms from mount):
-     0    → DOM mounts
-     300  → CSS delay ends → logo begins cinematic flight
-     1400 → Logo lands perfectly at center
-     1650 → phase: 'live'  → breathing + glow activate
-     3300 → phase: 'exit'
-     4000 → onLoadingComplete fires
-═══════════════════════════════════════════════════════ */
-const Loader = ({ onLoadingComplete }) => {
-  const [phase, setPhase] = useState('enter');
-
-  useEffect(() => {
-    const t1 = setTimeout(() => setPhase('live'), 1650);
-    const t2 = setTimeout(() => setPhase('exit'), 3300);
-    const t3 = setTimeout(() => onLoadingComplete?.(), 4000);
-    return () => [t1, t2, t3].forEach(clearTimeout);
-  }, [onLoadingComplete]);
-
-  const isLive = phase === 'live' || phase === 'exit';
+  if (!visible) return null;
 
   return (
-    <div className={`ldr${phase === 'exit' ? ' ldr-exit' : ''}`}>
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      background: '#000',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 9999,
+      overflow: 'hidden',
+    }}>
+      <style>{`
+        /* Slow & Smooth Swipe: Left to Right */
+        @keyframes slowSwipe {
+          0% {
+            opacity: 0;
+            transform: translateX(-120vw) scale(0.8);
+          }
+          20% {
+            opacity: 1;
+          }
+          /* Center Position & Size Peak */
+          50% {
+            opacity: 1;
+            transform: translateX(0vw) scale(1.4); 
+          }
+          80% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0;
+            transform: translateX(120vw) scale(0.8);
+          }
+        }
 
-      {/* ── Layer 0: Matrix rain canvas ─────────────────── */}
-      <MatrixCanvas />
+        /* Headline text animation */
+        @keyframes fadeInUp {
+          0%, 25% { opacity: 0; transform: translateY(20px); }
+          50% { opacity: 1; transform: translateY(0); }
+          75%, 100% { opacity: 0; transform: translateY(-20px); }
+        }
 
-      {/* ── Layer 1: Grid texture via ::before ──────────── */}
+        .loader-main-container {
+          animation: slowSwipe 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+        }
 
-      {/* ── Layer 2: Vignette — edges dark, center open ─── */}
-      <div className="ldr-vignette" aria-hidden="true" />
+        .headline-text {
+          font-family: 'serif', sans-serif;
+          font-size: 32px;
+          font-weight: 700;
+          color: #fff;
+          letter-spacing: 0.1em;
+          margin-top: 10px;
+          text-transform: uppercase;
+          animation: fadeInUp 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
 
-      {/* ── Layer 3: Warm radial plate behind logo ───────── */}
-      <div className="ldr-radial" aria-hidden="true" />
+        .sub-text {
+          font-size: 10px;
+          letter-spacing: 0.6em;
+          color: #888;
+          text-transform: uppercase;
+          margin-top: -10px;
+        }
+      `}</style>
 
-      {/* ── Layer 4: Scanline sweep ──────────────────────── */}
-      <div className="scanline" aria-hidden="true" />
+      <div className="loader-main-container">
+        
+        {/* Logo Image */}
+        <img
+          src="/iqra.jpeg"
+          alt="IQRA Optical"
+          style={{
+            width: '150px', // Pehle se thora bara size
+            height: '150px',
+            objectFit: 'contain',
+            borderRadius: '50%',
+            background: '#fff',
+            padding: '5px',
+            boxShadow: '0 0 40px rgba(255, 255, 255, 0.15)'
+          }}
+        />
 
-      {/* ── Layer 5: Corner HUD brackets ─────────────────── */}
-      <div className="corner corner-tl" aria-hidden="true" />
-      <div className="corner corner-tr" aria-hidden="true" />
-      <div className="corner corner-bl" aria-hidden="true" />
-      <div className="corner corner-br" aria-hidden="true" />
-
-      {/* ── Layer 6: 3-D orbital scene ───────────────────── */}
-      <div className="ldr-scene" aria-hidden="true">
-
-        {/* Back rings — blurred for perceived depth */}
-        <div className="orb orb-depth orb-1" />
-        <div className="orb orb-depth orb-2" />
-
-        {/* Front rings — crisp, precise */}
-        <div className="orb orb-3" />
-        <div className="orb orb-eq" />
-
-        {/* Orbiting energy dot */}
-        <div className="orb-dot" />
-
-        {/* Pulse rings */}
-        {PULSES.map((p, i) => (
-          <div
-            key={i}
-            className="pulse-ring"
-            style={{ '--pdur': p.dur, '--pdelay': p.delay }}
-          />
-        ))}
-
-        {/* Spark burst particles */}
-        {SPARKS.map((s, i) => (
-          <div
-            key={i}
-            className="spark"
-            style={{
-              '--angle': s.angle,
-              '--dist':  s.dist,
-              '--dur':   s.dur,
-              '--delay': s.delay,
-              width:     `${s.size}px`,
-              height:    `${s.size}px`,
-              background: s.color,
-            }}
-          />
-        ))}
-
-        {/*
-          ┌─ TWO-LAYER LOGO STRUCTURE ──────────────────────────┐
-          │                                                      │
-          │  .ldr-logo-track  ← 3-D cinematic entry             │
-          │    transform: translateX(-55vw) rotateY(42deg)       │
-          │    → translateX(0) rotateY(0deg)                     │
-          │    Plays ONCE, then holds final state (fill:both)    │
-          │                                                      │
-          │    .ldr-logo-wrap  ← scale breathing + glow ring    │
-          │      transform: scale(1) ↔ scale(1.025)             │
-          │      Starts AFTER entry lands (live phase)           │
-          │                                                      │
-          │      <img>  ← always sharp, no transform on it      │
-          │                                                      │
-          │  Separation avoids CSS transform override conflict.  │
-          └──────────────────────────────────────────────────── ┘
-        */}
-        <div className="ldr-logo-track">
-          <div className={`ldr-logo-wrap${isLive ? ' ldr-logo-live' : ''}`}>
-            <img
-              src="./logo.png"
-              alt="IQRA Optics"
-              className="ldr-logo"
-              draggable={false}
-            />
-          </div>
+        {/* Main Headline Message */}
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <h1 className="headline-text">Iqra Optics</h1>
+          <span className="sub-text">World of Vision</span>
         </div>
-      </div>
 
-      {/* ── Layer 7: HUD brand text ──────────────────────── */}
-      <div className="ldr-hud">
-        <div className="ldr-brand">IQRA&nbsp;Optics</div>
-        <div className="ldr-sub">INITIALIZING&nbsp;SYSTEM</div>
       </div>
-
-      {/* ── Layer 8: Progress bar ────────────────────────── */}
-      <div className="ldr-bar-wrap" aria-hidden="true">
-        <div className="ldr-bar-track">
-          <div className="ldr-bar-fill" />
-        </div>
-      </div>
-
     </div>
   );
 };
 
-export default Loader;
+export default PageLoader;
