@@ -1,650 +1,285 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import {
+  Heart,
+  ShoppingBag,
+  Zap,
+  Truck,
+  ShieldCheck,
+  RotateCcw,
+  Check,
+  X,
+  Minus,
+  Plus,
+} from 'lucide-react';
+import { getProductById, getRelatedProducts } from '../data/products';
 import { useCart } from '../context/CartContext';
-import { products } from '../data/products';
-import { useState, useEffect } from 'react';
-
-// Helper function to get product images
-const getProductImages = (product) => {
-  if (!product) return ['/placeholder.jpg'];
-  
-  // If product has images array
-  if (product.images && Array.isArray(product.images) && product.images.length > 0) {
-    
-    return product.images;
-  }
-  
-  // If product has variants with images
-  if (product.variants && product.variants.length > 0) {
-    const variantImages = product.variants.map(v => v.image).filter(img => img);
-    if (variantImages.length > 0) return variantImages;
-  }
-  
-  // If product has mainImage
-  if (product.mainImage) return [product.mainImage];
-  
-  // If product has image
-  if (product.image) return [product.image];
-  
-  return ['/placeholder.jpg'];
-};
-
-// Helper function to get main image
-const getMainImage = (product) => {
-  if (!product) return '/placeholder.jpg';
-  if (product.mainImage) return product.mainImage;
-  if (product.images && product.images.length > 0) return product.images[0];
-  if (product.variants && product.variants.length > 0) return product.variants[0].image;
-  if (product.image) return product.image;
-  return '/placeholder.jpg';
-};
-
-// Get discounted price - FIXED to handle string prices with commas
-const getDiscountedPrice = (product) => {
-  if (product.discountPrice) {
-    // Handle string with commas like "1,499"
-    const priceString = String(product.discountPrice).replace(/,/g, '');
-    return parseFloat(priceString);
-  }
-  if (product.originalPrice) {
-    const priceString = String(product.originalPrice).replace(/,/g, '');
-    return parseFloat(priceString);
-  }
-  if (product.price) {
-    const priceString = String(product.price).replace(/,/g, '');
-    return Math.round(parseFloat(priceString) * 0.9);
-  }
-  return 0;
-};
-
-const getOriginalPrice = (product) => {
-  if (product.originalPrice) {
-    const priceString = String(product.originalPrice).replace(/,/g, '');
-    return parseFloat(priceString);
-  }
-  if (product.price) {
-    const priceString = String(product.price).replace(/,/g, '');
-    return parseFloat(priceString);
-  }
-  return 0;
-};
-
-const getDiscountPercent = (product) => {
-  if (product.discount) {
-    return product.discount;
-  }
-  const original = getOriginalPrice(product);
-  const discounted = getDiscountedPrice(product);
-  if (original && discounted && original > discounted) {
-    const percent = Math.round(((original - discounted) / original) * 100);
-    return `${percent}%`;
-  }
-  return '10%';
-};
+import { useWishlist } from '../context/WishlistContext';
+import ProductCard from '../components/ProductCard';
+import QuickViewModal from '../components/QuickViewModal';
+import NotFound from './NotFound';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [product, setProduct] = useState(null);
   const { addToCart } = useCart();
+  const { isWishlisted, toggleWishlist } = useWishlist();
+
+  const product = useMemo(() => getProductById(id), [id]);
+  const related = useMemo(() => (product ? getRelatedProducts(product, 4) : []), [product]);
+
+  const [activeImage, setActiveImage] = useState(0);
+  const [activeColor, setActiveColor] = useState(product?.colors?.[0] || '');
   const [quantity, setQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedVariant, setSelectedVariant] = useState(0);
-  
-  // Prescription state (optional - only for frames/glasses)
-  const [needPrescription, setNeedPrescription] = useState(false);
-  const [prescriptionDetails, setPrescriptionDetails] = useState({
-    sphereLeft: '',
-    sphereRight: '',
-    cylinderLeft: '',
-    cylinderRight: '',
-    axisLeft: '',
-    axisRight: '',
-    pd: ''
-  });
+  const [tab, setTab] = useState('description');
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [added, setAdded] = useState(false);
 
-  // Load product on mount and when id changes
   useEffect(() => {
-    const foundProduct = products.find(p => p.id === parseInt(id));
-    setProduct(foundProduct || null);
-    // Reset states when product changes
-    setSelectedImage(0);
-    setSelectedVariant(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setActiveImage(0);
     setQuantity(1);
-    setNeedPrescription(false);
-  }, [id]);
+    setAdded(false);
+    if (product) setActiveColor(product.colors?.[0] || '');
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Check if product is eyewear/frame
-  const isEyewear = product?.shape || 
-                    product?.name?.toLowerCase().includes('frame') ||
-                    product?.name?.toLowerCase().includes('glass') ||
-                    product?.name?.toLowerCase().includes('sunglass');
+  if (!product) return <NotFound />;
 
-  // Swipe state for mobile
-  const [touchStart, setTouchStart] = useState(null);
-  const [touchEnd, setTouchEnd] = useState(null);
-
-  if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center py-20 font-serif">
-          <h2 className="text-2xl mb-4">Product not found</h2>
-          <button 
-            onClick={() => navigate('/products')} 
-            className="bg-black text-white px-8 py-3 text-sm uppercase tracking-widest hover:bg-gray-800 transition"
-          >
-            Browse Products
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Get prices using fixed functions
-  const discountedPrice = getDiscountedPrice(product);
-  const originalPrice = getOriginalPrice(product);
-  const discountPercent = getDiscountPercent(product);
-  const discountAmount = originalPrice - discountedPrice;
-  
-  // Get all images for this product
-  const images = getProductImages(product);
-  
-  // Get variants
-  const variants = product.variants || [];
-  
-  // Get related products (same category, exclude current)
-  const relatedProducts = products
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
-
-  // Performance data (only for perfumes - you can customize based on product type)
-  const performance = [
-    { label: "Material", value: product.material || "Premium Quality" },
-    { label: "Shape", value: product.shape || "Classic" },
-    { label: "Made In", value: product.madeInTaiwan ? "Taiwan" : "Imported" }
-  ];
-
-  // Format price
-  const formatPrice = (price) => {
-    if (isNaN(price) || price === 0) return 'PKR 0';
-    return new Intl.NumberFormat('en-PK', {
-      style: 'currency',
-      currency: 'PKR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(price);
-  };
+  const wished = isWishlisted(product.id);
 
   const handleAddToCart = () => {
-    const productToAdd = {
-      id: product.id,
-      name: product.name,
-      price: discountedPrice,
-      originalPrice: originalPrice,
-      discount: discountPercent,
-      image: getMainImage(product),
-      category: product.category,
-      variant: variants[selectedVariant] || null,
-      shape: product.shape,
-      quantity: quantity,
-      // Include prescription if needed
-      prescription: needPrescription ? prescriptionDetails : null
-    };
-    addToCart(productToAdd, quantity);
-    
-    // Optional: Show success feedback
-    // You could add a toast notification here
+    addToCart({ ...product, selectedColor: activeColor }, quantity);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
   };
 
   const handleBuyNow = () => {
-    const productToAdd = {
-      id: product.id,
-      name: product.name,
-      price: discountedPrice,
-      originalPrice: originalPrice,
-      discount: discountPercent,
-      image: getMainImage(product),
-      category: product.category,
-      variant: variants[selectedVariant] || null,
-      shape: product.shape,
-      quantity: quantity,
-      prescription: needPrescription ? prescriptionDetails : null
-    };
-    addToCart(productToAdd, quantity);
-    navigate('/cart');
-  };
-
-  // Swipe handlers for mobile image gallery
-  const handleTouchStart = (e) => {
-    setTouchStart(e.touches[0].clientX);
-    setTouchEnd(null);
-  };
-
-  const handleTouchMove = (e) => {
-    setTouchEnd(e.touches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const diff = touchStart - touchEnd;
-    const threshold = 50;
-
-    if (Math.abs(diff) > threshold) {
-      if (diff > 0 && selectedImage < images.length - 1) {
-        setSelectedImage(prev => prev + 1);
-      } else if (diff < 0 && selectedImage > 0) {
-        setSelectedImage(prev => prev - 1);
-      }
-    }
-
-    setTouchStart(null);
-    setTouchEnd(null);
-  };
-
-  const handlePrescriptionChange = (field, value) => {
-    setPrescriptionDetails(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    addToCart({ ...product, selectedColor: activeColor }, quantity);
+    navigate('/checkout');
   };
 
   return (
-    <div className="bg-white text-black font-sans">
-      <div className="container mx-auto px-4 py-4 sm:py-8 max-w-6xl">
-        
-        {/* Breadcrumb / Back */}
-        <button 
-          onClick={() => navigate(-1)} 
-          className="mb-4 sm:mb-6 text-xs sm:text-sm uppercase tracking-widest text-gray-500 hover:text-black transition-colors flex items-center gap-2"
-        >
-          ← Back to Collection
-        </button>
+    <div className="bg-white">
+      <div className="container mx-auto px-4 max-w-7xl py-6">
+        <div className="text-[11px] text-gray-500 uppercase tracking-wider flex items-center gap-2">
+          <Link to="/" className="hover:text-ink">Home</Link> /
+          <Link to="/products" className="hover:text-ink">Products</Link> /
+          <span className="text-ink">{product.name}</span>
+        </div>
+      </div>
 
-        <div className="flex flex-col lg:flex-row gap-6 sm:gap-12">
-          {/* Left: Product Images */}
-          <div className="lg:w-1/2">
-            <div className="flex gap-4">
-              {/* Thumbnail Gallery - Desktop */}
-              {images.length > 1 && (
-                <div className="hidden lg:flex flex-col gap-2 w-20">
-                  {images.map((img, index) => (
-                    <div 
-                      key={index}
-                      className={`border-2 cursor-pointer transition-all duration-300 overflow-hidden ${
-                        selectedImage === index 
-                          ? 'border-black' 
-                          : 'border-transparent hover:border-gray-300'
-                      }`}
-                      onClick={() => setSelectedImage(index)}
-                    >
-                      <img 
-                        src={`.${img}`} 
-                        alt={`${product.name} - View ${index + 1}`}
-                        className="w-full h-20 object-cover"
-                        onError={(e) => {
-                          e.target.src = '/placeholder.jpg';
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {/* Main Image Display */}
-              <div 
-                className="flex-1"
-                onTouchStart={images.length > 1 ? handleTouchStart : undefined}
-                onTouchMove={images.length > 1 ? handleTouchMove : undefined}
-                onTouchEnd={images.length > 1 ? handleTouchEnd : undefined}
-              >
-                <div className="border border-gray-100 overflow-hidden bg-gray-50">
-                  <img 
-                    src={`.${images[selectedImage]}` || '/placeholder.jpg'} 
-                    alt={product.name} 
-                    className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700"
-                    onError={(e) => {
-                      e.target.src = '/placeholder.jpg';
-                    }}
-                  />
-                </div>
-                
-                {/* Mobile Image Dots */}
-                {images.length > 1 && (
-                  <div className="flex justify-center gap-2 mt-4 lg:hidden">
-                    {images.map((_, index) => (
-                      <button
-                        key={index}
-                        className={`h-2 rounded-full transition-all ${
-                          selectedImage === index ? 'w-6 bg-black' : 'w-2 bg-gray-300'
-                        }`}
-                        onClick={() => setSelectedImage(index)}
-                        aria-label={`View image ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                )}
-                
-                <div className="text-center mt-4 font-bold tracking-tighter text-base sm:text-xl">
-                  {product.category === 'men' ? 'MEN' : product.category === 'women' ? 'WOMEN' : 'UNISEX'}
-                </div>
-              </div>
+      <div className="container mx-auto px-4 max-w-7xl pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+          {/* Gallery */}
+          <div>
+            <div className="aspect-square rounded-3xl overflow-hidden bg-sand shadow-card">
+              <motion.img
+                key={activeImage}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                src={product.images[activeImage] || product.image}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
             </div>
+            {product.images.length > 1 && (
+              <div className="flex gap-3 mt-4">
+                {product.images.map((img, i) => (
+                  <button
+                    key={img + i}
+                    onClick={() => setActiveImage(i)}
+                    className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-colors ${
+                      activeImage === i ? 'border-ink' : 'border-transparent'
+                    }`}
+                  >
+                    <img src={img} alt={`${product.name} view ${i + 1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Right: Product Info */}
-          <div className="lg:w-1/2">
-            <h1 className="text-xl sm:text-3xl font-bold uppercase tracking-tight mb-2">{product.name}</h1>
-            
-            {/* Product specs */}
-            <div className="flex flex-wrap gap-2 mb-3 text-xs">
-              {product.shape && (
-                <span className="bg-gray-100 px-2 py-1 rounded">{product.shape}</span>
-              )}
-              {product.madeInTaiwan && (
-                <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded">Made in Taiwan</span>
-              )}
-            </div>
-            
-            {/* Rating */}
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex text-yellow-400 text-base sm:text-lg">
-                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          {/* Info */}
+          <div>
+            <h1 className="text-3xl md:text-4xl font-serif font-semibold text-ink">{product.name}</h1>
+
+            {typeof product.reviews === 'number' && (
+              <div className="flex items-center gap-4 mt-3">
+                <span className="text-xs text-gray-500">{product.reviews} reviews</span>
               </div>
-              <span className="text-gray-400 text-xs sm:text-sm">({product.reviews || 0} Reviews)</span>
+            )}
+
+            <div className="flex items-baseline gap-3 mt-6">
+              <span className="text-3xl font-bold text-ink">Rs. {product.price.toLocaleString()}</span>
             </div>
 
-            {/* Price with Discount from data */}
-            <div className="mb-4">
-              <span className="text-xl sm:text-3xl font-bold text-red-600">{formatPrice(discountedPrice)}</span>
-              {originalPrice > discountedPrice && (
-                <>
-                  <span className="text-gray-400 text-base sm:text-lg line-through ml-3 font-normal">
-                    {formatPrice(originalPrice)}
-                  </span>
-                  <span className="ml-3 bg-red-100 text-red-600 text-xs sm:text-sm px-2 py-1 rounded font-semibold">
-                    -{discountPercent} OFF
-                  </span>
-                </>
-              )}
+            <p className="text-sm text-gray-600 leading-relaxed mt-6">{product.description}</p>
+
+            {/* Specs grid */}
+            <div className="grid grid-cols-2 gap-x-6 gap-y-3 mt-6 text-sm">
+              <div className="flex justify-between border-b border-gray-100 pb-2">
+                <span className="text-gray-500">Category</span>
+                <span className="font-medium text-ink">{product.category}</span>
+              </div>
+              <div className="flex justify-between border-b border-gray-100 pb-2">
+                <span className="text-gray-500">Shape</span>
+                <span className="font-medium text-ink">{product.shape}</span>
+              </div>
+              <div className="flex justify-between border-b border-gray-100 pb-2">
+                <span className="text-gray-500">Gender</span>
+                <span className="font-medium text-ink">{product.gender}</span>
+              </div>
+              <div className="flex justify-between border-b border-gray-100 pb-2">
+                <span className="text-gray-500">Made in Taiwan</span>
+                <span className="font-medium text-ink flex items-center gap-1">
+                  {product.madeInTaiwan ? <Check size={14} className="text-green-600" /> : <X size={14} className="text-red-500" />}
+                  {product.madeInTaiwan ? 'Yes' : 'No'}
+                </span>
+              </div>
             </div>
 
-            {/* Variant Selector */}
-            {variants.length > 0 && (
-              <div className="mb-6">
-                <h3 className="font-bold border-b pb-1 uppercase text-xs sm:text-sm tracking-wider mb-3">Color / Style</h3>
-                <div className="flex flex-wrap gap-3">
-                  {variants.map((variant, index) => (
+            {/* Colors */}
+            {product.colors?.length > 0 && (
+              <div className="mt-6">
+                <p className="text-xs font-bold uppercase tracking-wider text-ink mb-3">
+                  Color: <span className="font-normal text-gray-500">{activeColor}</span>
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {product.colors.map((color) => (
                     <button
-                      key={index}
-                      onClick={() => {
-                        setSelectedVariant(index);
-                        // Update image when variant changes if variant has image
-                        if (variant.image) {
-                          const imageIndex = images.findIndex(img => img === variant.image);
-                          if (imageIndex !== -1) {
-                            setSelectedImage(imageIndex);
-                          }
-                        }
-                      }}
-                      className={`px-4 py-2 text-xs border transition ${
-                        selectedVariant === index
-                          ? 'border-black bg-black text-white'
-                          : 'border-gray-300 hover:border-black'
+                      key={color}
+                      onClick={() => setActiveColor(color)}
+                      className={`px-4 py-2 rounded-full text-xs font-medium border transition-colors ${
+                        activeColor === color ? 'bg-ink text-white border-ink' : 'border-gray-300 text-gray-600 hover:border-ink'
                       }`}
                     >
-                      {variant.colorName || `Style ${index + 1}`}
+                      {color}
                     </button>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* OPTIONAL PRESCRIPTION SECTION - Only for eyewear/frames */}
-            {isEyewear && (
-              <div className="mb-6 border-t pt-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold uppercase text-xs sm:text-sm tracking-wider">Prescription Lenses</h3>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <span className="text-xs text-gray-600">Need prescription?</span>
-                    <input
-                      type="checkbox"
-                      checked={needPrescription}
-                      onChange={(e) => setNeedPrescription(e.target.checked)}
-                      className="w-4 h-4 accent-black"
-                    />
-                  </label>
-                </div>
-
-                {needPrescription && (
-                  <div className="bg-gray-50 p-4 space-y-4">
-                    <p className="text-xs text-gray-500 mb-2">Please fill in your prescription details (optional, can be added later)</p>
-                    
-                    {/* Sphere (Power) */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium mb-1">Sphere (Left Eye)</label>
-                        <input
-                          type="text"
-                          placeholder="e.g., -2.00"
-                          value={prescriptionDetails.sphereLeft}
-                          onChange={(e) => handlePrescriptionChange('sphereLeft', e.target.value)}
-                          className="w-full border p-2 text-sm focus:outline-none focus:border-black"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1">Sphere (Right Eye)</label>
-                        <input
-                          type="text"
-                          placeholder="e.g., -1.75"
-                          value={prescriptionDetails.sphereRight}
-                          onChange={(e) => handlePrescriptionChange('sphereRight', e.target.value)}
-                          className="w-full border p-2 text-sm focus:outline-none focus:border-black"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Cylinder */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium mb-1">Cylinder (Left)</label>
-                        <input
-                          type="text"
-                          placeholder="e.g., -0.50"
-                          value={prescriptionDetails.cylinderLeft}
-                          onChange={(e) => handlePrescriptionChange('cylinderLeft', e.target.value)}
-                          className="w-full border p-2 text-sm focus:outline-none focus:border-black"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1">Cylinder (Right)</label>
-                        <input
-                          type="text"
-                          placeholder="e.g., -0.75"
-                          value={prescriptionDetails.cylinderRight}
-                          onChange={(e) => handlePrescriptionChange('cylinderRight', e.target.value)}
-                          className="w-full border p-2 text-sm focus:outline-none focus:border-black"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Axis */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium mb-1">Axis (Left) - 0 to 180</label>
-                        <input
-                          type="text"
-                          placeholder="e.g., 180"
-                          value={prescriptionDetails.axisLeft}
-                          onChange={(e) => handlePrescriptionChange('axisLeft', e.target.value)}
-                          className="w-full border p-2 text-sm focus:outline-none focus:border-black"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1">Axis (Right) - 0 to 180</label>
-                        <input
-                          type="text"
-                          placeholder="e.g., 175"
-                          value={prescriptionDetails.axisRight}
-                          onChange={(e) => handlePrescriptionChange('axisRight', e.target.value)}
-                          className="w-full border p-2 text-sm focus:outline-none focus:border-black"
-                        />
-                      </div>
-                    </div>
-
-                    {/* PD (Pupillary Distance) */}
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Pupillary Distance (PD) in mm</label>
-                      <input
-                        type="text"
-                        placeholder="e.g., 62"
-                        value={prescriptionDetails.pd}
-                        onChange={(e) => handlePrescriptionChange('pd', e.target.value)}
-                        className="w-full border p-2 text-sm focus:outline-none focus:border-black"
-                      />
-                      <p className="text-xs text-gray-400 mt-1">Average PD is between 54-74mm</p>
-                    </div>
-
-                    <div className="text-xs text-gray-500 bg-yellow-50 p-2 rounded">
-                      ⚡ Prescription lenses may add additional charges. Our team will contact you for verification.
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Description */}
-            <div className="space-y-3 mb-6">
-              <h3 className="font-bold border-b pb-1 uppercase text-xs sm:text-sm tracking-wider">Description</h3>
-              <div className="text-gray-700 leading-relaxed text-xs sm:text-sm whitespace-pre-line max-h-96 overflow-y-auto">
-                {product.description || `${product.name} - High quality eyewear with premium materials.`}
-              </div>
+            {/* Stock status */}
+            <div className="mt-6">
+              <p className="text-xs font-semibold text-green-600 flex items-center gap-1.5">
+                <Check size={14} /> In Stock
+              </p>
             </div>
 
-            {/* Product Features/Specs */}
-            <div className="space-y-3 mb-6">
-              <h3 className="font-bold border-b pb-1 uppercase text-xs sm:text-sm tracking-wider">Specifications</h3>
-              <ul className="text-xs sm:text-sm space-y-1">
-                {performance.map((item, index) => (
-                  <li key={index} className="flex justify-between items-center py-1 border-b border-gray-50">
-                    <span className="text-gray-600">{item.label}</span>
-                    <span className="font-semibold">{item.value}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Quantity and Add to Cart */}
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center">
-                <span className="text-xs uppercase tracking-wider mr-4">Quantity</span>
-                <div className="flex items-center border">
-                  <button 
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))} 
-                    className="px-3 py-1 sm:px-4 sm:py-2 border-r hover:bg-gray-100 transition disabled:opacity-50 text-sm"
-                    disabled={quantity <= 1}
-                  >
-                    -
-                  </button>
-                  <input 
-                    type="number" 
-                    value={quantity} 
-                    readOnly 
-                    className="w-12 text-center focus:outline-none py-1 sm:py-2 text-sm"
-                    min="1"
-                  />
-                  <button 
-                    onClick={() => setQuantity(quantity + 1)} 
-                    className="px-3 py-1 sm:px-4 sm:py-2 border-l hover:bg-gray-100 transition text-sm"
-                  >
-                    +
-                  </button>
-                </div>
+            {/* Quantity + Actions */}
+            <div className="flex flex-wrap items-center gap-4 mt-6">
+              <div className="flex items-center border border-gray-300 rounded-full">
+                <button
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  className="w-10 h-10 flex items-center justify-center hover:bg-gray-50 rounded-full"
+                  aria-label="Decrease quantity"
+                >
+                  <Minus size={14} />
+                </button>
+                <span className="w-10 text-center text-sm font-semibold">{quantity}</span>
+                <button
+                  onClick={() => setQuantity((q) => Math.min(99, q + 1))}
+                  className="w-10 h-10 flex items-center justify-center hover:bg-gray-50 rounded-full"
+                  aria-label="Increase quantity"
+                >
+                  <Plus size={14} />
+                </button>
               </div>
 
+              <button
+                onClick={() => toggleWishlist(product)}
+                className="w-11 h-11 rounded-full border border-gray-300 flex items-center justify-center hover:border-ink transition-colors"
+                aria-label="Toggle wishlist"
+              >
+                <Heart size={18} className={wished ? 'fill-red-500 text-red-500' : 'text-gray-700'} />
+              </button>
+            </div>
+
+            <div className="flex gap-3 mt-4">
               <button
                 onClick={handleAddToCart}
-                className="w-full bg-red-600 text-white font-bold py-2 sm:py-4 text-sm sm:text-base uppercase tracking-widest hover:bg-black transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 bg-ink text-white text-xs font-bold uppercase tracking-wider py-4 rounded-full hover:bg-black transition-colors"
               >
-                Add to Cart - {formatPrice(discountedPrice * quantity)}
+                {added ? <Check size={16} /> : <ShoppingBag size={16} />}
+                {added ? 'Added to Cart' : 'Add to Cart'}
               </button>
-
               <button
                 onClick={handleBuyNow}
-                className="w-full border-2 border-black text-black font-bold py-2 sm:py-4 text-sm sm:text-base uppercase tracking-widest hover:bg-black hover:text-white transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 border-2 border-ink text-ink text-xs font-bold uppercase tracking-wider py-4 rounded-full hover:bg-ink hover:text-white transition-colors"
               >
-                Buy Now - {formatPrice(discountedPrice * quantity)}
+                <Zap size={16} /> Buy Now
               </button>
             </div>
-          </div>
-        </div>
 
-        {/* Customer Reviews Section */}
-        <div className="mt-10 sm:mt-20 border-t pt-5 sm:pt-10">
-          <h2 className="text-lg sm:text-2xl font-bold text-center uppercase mb-6 sm:mb-10">Customer Reviews</h2>
-          <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8">
-            <div className="border-b pb-4 sm:pb-6">
-              <div className="flex text-yellow-400 mb-1 text-base sm:text-lg">
-                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            {/* Trust badges */}
+            <div className="grid grid-cols-3 gap-3 mt-8 pt-6 border-t border-gray-100">
+              <div className="flex flex-col items-center text-center gap-1.5">
+                <Truck size={20} className="text-gold" strokeWidth={1.5} />
+                <span className="text-[10px] text-gray-500 uppercase tracking-wide">Fast Delivery</span>
               </div>
-              <p className="font-bold text-sm sm:text-base">Asad Murtaza</p>
-              <p className="text-gray-600 italic text-xs sm:text-sm">"Very Good Product, exactly what I was looking for."</p>
-              <p className="text-xs text-gray-400 mt-1">Verified Purchase</p>
-            </div>
-            <div className="border-b pb-4 sm:pb-6">
-              <div className="flex text-yellow-400 mb-1 text-base sm:text-lg">
-                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+              <div className="flex flex-col items-center text-center gap-1.5">
+                <ShieldCheck size={20} className="text-gold" strokeWidth={1.5} />
+                <span className="text-[10px] text-gray-500 uppercase tracking-wide">1 Yr Warranty</span>
               </div>
-              <p className="font-bold text-sm sm:text-base">Ahmed</p>
-              <p className="text-gray-600 italic text-xs sm:text-sm">"Great quality and fast shipping."</p>
-              <p className="text-xs text-gray-400 mt-1">Verified Purchase</p>
+              <div className="flex flex-col items-center text-center gap-1.5">
+                <RotateCcw size={20} className="text-gold" strokeWidth={1.5} />
+                <span className="text-[10px] text-gray-500 uppercase tracking-wide">Easy Returns</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Related Products Section */}
-        {relatedProducts.length > 0 && (
-          <div className="mt-10 sm:mt-20 border-t pt-5 sm:pt-10">
-            <h2 className="text-lg sm:text-2xl font-bold text-center uppercase mb-6 sm:mb-10">You May Also Like</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
-              {relatedProducts.map(relatedProduct => {
-                const relatedImage = getMainImage(relatedProduct);
-                const relatedDiscountedPrice = getDiscountedPrice(relatedProduct);
-                const relatedOriginalPrice = getOriginalPrice(relatedProduct);
-                const relatedDiscountPercent = getDiscountPercent(relatedProduct);
-                
-                return (
-                  <div 
-                    key={relatedProduct.id} 
-                    className="cursor-pointer group"
-                    onClick={() => {
-                      navigate(`/product/${relatedProduct.id}`);
-                      window.scrollTo(0, 0);
-                    }}
-                  >
-                    <div className="overflow-hidden bg-gray-50 aspect-square">
-                      <img 
-                        src={`.${relatedImage}`} 
-                        alt={relatedProduct.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        onError={(e) => {
-                          e.target.src = '/placeholder.jpg';
-                        }}
-                      />
-                    </div>
-                    <h3 className="text-[11px] sm:text-xs font-bold uppercase mt-1 truncate">{relatedProduct.name}</h3>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-red-600 text-[11px] sm:text-sm font-bold">{formatPrice(relatedDiscountedPrice)}</p>
-                      {relatedOriginalPrice > relatedDiscountedPrice && (
-                        <p className="text-gray-400 text-[10px] sm:text-xs line-through">{formatPrice(relatedOriginalPrice)}</p>
-                      )}
-                    </div>
-                    <span className="text-green-600 text-[10px] sm:text-xs font-semibold">-{relatedDiscountPercent} OFFk</span>
-                  </div>
-                );
-              })}
+        {/* Tabs: Description / Reviews */}
+        <div className="mt-16">
+          <div className="flex gap-8 border-b border-gray-200">
+            {['description', 'reviews'].map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`pb-4 text-xs font-bold uppercase tracking-wider capitalize transition-colors ${
+                  tab === t ? 'text-ink border-b-2 border-ink' : 'text-gray-400 hover:text-gray-600'
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+
+          <div className="py-8 max-w-3xl">
+            {tab === 'description' && (
+              <p className="text-sm text-gray-600 leading-relaxed">{product.description}</p>
+            )}
+            {tab === 'reviews' && (
+              <div>
+                <p className="text-sm text-gray-600 mb-6">
+                  {product.reviews ? `${product.reviews} customer reviews` : 'No reviews yet'}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Customer reviews are collected after verified purchases. Be the first to leave detailed
+                  feedback on fit, comfort, and quality for this frame.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Related products */}
+        {related.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-2xl font-serif font-semibold text-ink mb-8">You May Also Like</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-6">
+              {related.map((p) => (
+                <ProductCard key={p.id} product={p} onQuickView={setQuickViewProduct} />
+              ))}
             </div>
           </div>
         )}
       </div>
+
+      <QuickViewModal product={quickViewProduct} onClose={() => setQuickViewProduct(null)} />
     </div>
   );
 };

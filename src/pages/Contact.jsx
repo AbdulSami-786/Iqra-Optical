@@ -1,132 +1,101 @@
-import { useState } from 'react';
-import { Mail, Phone, MessageSquare, MapPin, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Mail, Phone, MessageSquare, MapPin, Clock, CheckCircle } from 'lucide-react';
+
+const inputClass =
+  'w-full px-4 py-3.5 rounded-xl border border-gray-300 outline-none focus:border-ink transition-colors text-sm';
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '', email: '', phone: '', subject: '', message: ''
-  });
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [sent, setSent] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 3000);
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    if (!form.name || !form.email || !form.message) return;
+    setSent(true);
+    setTimeout(() => setSent(false), 4000);
+    setForm({ name: '', email: '', message: '' });
   };
 
- 
+  const infoItems = [
+    { icon: MapPin, title: 'Visit Us', desc: 'Karachi, Pakistan' },
+    { icon: Phone, title: 'Call Us', desc: '+92 371 1191925' },
+    { icon: Mail, title: 'Email Us', desc: 'IqraOptical@gmail.com' },
+    { icon: Clock, title: 'Working Hours', desc: 'Mon – Sat, 10am – 9pm' },
+  ];
 
   return (
-    <div className="bg-white text-black font-sans">
-      {/* 1. Header Section */}
-      <div className="py-16 md:py-24 text-center border-b border-gray-100">
-        <h1 className="text-4xl md:text-5xl font-serif italic tracking-tight text-black mb-4 uppercase">
-          Contact Us
-        </h1>
-        <div className="w-20 h-px bg-black mx-auto mb-6"></div>
-        <p className="text-[10px] tracking-[0.4em] uppercase text-gray-500 font-bold px-4">
-          Expert Assistance for your Fragrance Journey
-        </p>
+    <div className="bg-white">
+      <div className="bg-cream/60 py-16 text-center border-b border-gray-100">
+        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-gold">Get in Touch</span>
+        <h1 className="text-3xl md:text-4xl font-serif font-semibold text-ink mt-2">We'd Love to Hear From You</h1>
       </div>
 
-      <div className="container mx-auto px-4 py-16">
-        {/* 2. Communication Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-24">
-          <div className="text-center group">
-            <div className="mb-6 flex justify-center text-gray-400 group-hover:text-black transition-colors">
-              <Phone size={30} strokeWidth={1} />
-            </div>
-            <h3 className="text-xs tracking-[0.3em] font-bold uppercase mb-3">Customer Concierge</h3>
-            <p className="text-sm font-serif italic mb-1">+92 371 1191925</p>
-            <p className="text-[10px] text-gray-400 tracking-widest uppercase">Mon-Sun, 11am - 11pm</p>
-          </div>
-          
-          <div className="text-center group">
-            <div className="mb-6 flex justify-center text-gray-400 group-hover:text-black transition-colors">
-              <Mail size={30} strokeWidth={1} />
-            </div>
-            <h3 className="text-xs tracking-[0.3em] font-bold uppercase mb-3">Digital Inquiries</h3>
-            <p className="text-sm font-serif italic mb-1">zareenfragrances@gmail.comk</p>
-            <p className="text-[10px] text-gray-400 tracking-widest uppercase">24/7 Response Time</p>
-          </div>
-          
-          <div className="text-center group">
-            <div className="mb-6 flex justify-center text-gray-400 group-hover:text-black transition-colors">
-              <MessageSquare size={30} strokeWidth={1} />
-            </div>
-            <h3 className="text-xs tracking-[0.3em] font-bold uppercase mb-3">WhatsApp Live</h3>
-            <p className="text-sm font-serif italic mb-1">+92 371 1191925</p>
-            <p className="text-[10px] text-gray-400 tracking-widest uppercase">Quickest Assistance</p>
-          </div>
-        </div>
-
-        {/* 3. Form Section */}
-        <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 mb-32 items-center">
-          <div>
-            <h2 className="text-2xl font-serif italic mb-6">Share Your Thoughts</h2>
-            <p className="text-gray-500 text-sm leading-relaxed mb-8 font-light">
-              Whether you are looking for a signature scent or need help with an order, our specialists are here to assist you.
-            </p>
-            
-            {isSubmitted ? (
-              <div className="p-6 bg-black text-white text-[10px] tracking-[0.2em] uppercase font-bold text-center">
-                Your message has been received. Thank you.
+      <div className="container mx-auto px-4 max-w-6xl py-16 grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-14">
+        <div>
+          <h2 className="text-xl font-serif font-semibold text-ink mb-6">Contact Information</h2>
+          <div className="space-y-6">
+            {infoItems.map((item) => (
+              <div key={item.title} className="flex items-start gap-4">
+                <div className="w-11 h-11 rounded-full bg-cream flex items-center justify-center flex-shrink-0">
+                  <item.icon size={18} className="text-gold" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-ink">{item.title}</p>
+                  <p className="text-sm text-gray-500">{item.desc}</p>
+                </div>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="NAME"
-                  className="w-full border-b border-gray-200 py-3 text-[10px] tracking-widest focus:border-black outline-none transition-colors uppercase font-bold"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  placeholder="EMAIL ADDRESS"
-                  className="w-full border-b border-gray-200 py-3 text-[10px] tracking-widest focus:border-black outline-none transition-colors uppercase font-bold"
-                />
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows="4"
-                  placeholder="HOW CAN WE HELP YOU?"
-                  className="w-full border-b border-gray-200 py-3 text-[10px] tracking-widest focus:border-black outline-none transition-colors uppercase font-bold resize-none"
-                ></textarea>
-                <button
-                  type="submit"
-                  className="bg-black text-white px-10 py-4 text-[10px] tracking-[0.3em] font-bold uppercase hover:bg-gray-800 transition shadow-lg"
-                >
-                  Send Message
-                </button>
-              </form>
-            )}
+            ))}
           </div>
-          
-          <div className="bg-[#F9F9F9] p-8 md:p-12 text-center flex flex-col items-center justify-center border border-gray-100 h-full min-h-[400px]">
-            <MapPin size={40} strokeWidth={1} className="mb-6 text-gray-300" />
-            <h3 className="text-lg font-serif italic mb-4">The Flagship Experience</h3>
-          
-            <button className="text-[10px] font-bold tracking-[0.3em] border-b border-black pb-1 hover:text-gray-500 transition">
-              FIND ON MAPS
-            </button>
+
+          <div className="mt-10 rounded-2xl overflow-hidden shadow-card aspect-video">
+            <img src="/b2.jpg" alt="Iqra Optics location" className="w-full h-full object-cover" />
           </div>
         </div>
 
-        {/* 4. Retail Outlets */}
-       
+        <div className="bg-white rounded-3xl shadow-card p-8">
+          <div className="flex items-center gap-2 mb-6">
+            <MessageSquare size={18} className="text-gold" />
+            <h2 className="text-xl font-serif font-semibold text-ink">Send a Message</h2>
+          </div>
+
+          {sent && (
+            <div className="mb-5 flex items-center gap-2 bg-green-50 text-green-700 text-sm px-4 py-3 rounded-xl">
+              <CheckCircle size={16} /> Your message has been sent. We'll get back to you soon!
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              placeholder="Your Name"
+              value={form.name}
+              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              className={inputClass}
+              required
+            />
+            <input
+              type="email"
+              placeholder="Your Email"
+              value={form.email}
+              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              className={inputClass}
+              required
+            />
+            <textarea
+              placeholder="Your Message"
+              rows={5}
+              value={form.message}
+              onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+              className={`${inputClass} resize-none`}
+              required
+            />
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-ink text-white text-xs font-bold uppercase tracking-wider rounded-full hover:bg-black transition-colors"
+            >
+              Send Message
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,30 @@
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
+/*
+ * Design tokens for the site. These utilities (bg-ink, text-gold, shadow-card,
+ * animate-fadeIn, etc.) are used throughout the components but were never
+ * defined anywhere, so Tailwind silently dropped them — buttons/backgrounds
+ * using them rendered transparent instead of failing loudly.
+ */
+@theme {
+  --color-ink: #15171c;
+  --color-gold: #c9a227;
+  --color-cream: #faf6ef;
+  --color-sand: #efe7d8;
+
+  --shadow-card: 0 1px 3px rgba(15, 15, 20, 0.06), 0 8px 24px -12px rgba(15, 15, 20, 0.12);
+  --shadow-soft: 0 20px 45px -12px rgba(15, 15, 20, 0.18);
+
+  --animate-fadeIn: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
