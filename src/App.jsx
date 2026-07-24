@@ -1,10 +1,10 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
-import { WishlistProvider } from './context/WishlistContext';
-import PageLoader from './components/loader';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import { WishlistProvider } from './context/WishlistContext.jsx';
+import PageLoader from './components/loader.jsx';
+import Navbar from './components/Navbar.jsx';
+import Footer from './components/Footer.jsx';
 
 const Home = lazy(() => import('./pages/Home'));
 const Product = lazy(() => import('./pages/Product'));
