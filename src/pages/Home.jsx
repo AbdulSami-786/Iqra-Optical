@@ -22,17 +22,15 @@ const staggerParent = {
 };
 
 const heroSlides = [
-  { src: '/banner/banner-1.jpg', alt: 'Elevate your vision - IQRA Optics premium eyewear' },
-  { src: '/banner/banner-2.jpg', alt: 'Perfect vision, perfect style - IQRA Optics eyewear collection' },
-  { src: '/banner/banner-3.jpg', alt: 'IQRA Optics luxury eyewear' },
-  { src: '/banner/banner-4.jpg', alt: 'IQRA Optics luxury eyewear campaign' },
-  { src: '/banner/banner-5.jpg', alt: 'IQRA Optics luxury eyewear campaign' },
+  { src: '/public/banner/fix.1.jpeg', alt: 'Elevate your vision - IQRA Optics premium eyewear' },
+  { src: '/public/banner/fix.2.jpeg', alt: 'Perfect vision, perfect style - IQRA Optics eyewear collection' },
+  { src: '/public/banner/fix.3.jpeg', alt: 'IQRA Optics luxury eyewear' },
 ];
 
 const perks = [
   { icon: Truck, title: 'Free Shipping', desc: 'On orders over Rs. 5,000' },
-  { icon: ShieldCheck, title: '1 Year Warranty', desc: 'On all frame purchases' },
-  { icon: Clock, title: '7-Day Returns', desc: 'Hassle-free exchanges' },
+    { icon: ShieldCheck, title: 'Prescription Accuracy', desc: 'Precision lenses for crystal-clear vision' },
+  { icon: Clock, title: 'premium quality', desc: 'good quality material' },
   { icon: Award, title: 'Certified Lenses', desc: 'UV400 & anti-scratch coated' },
 ];
 
