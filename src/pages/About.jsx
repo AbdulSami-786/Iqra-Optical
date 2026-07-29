@@ -20,11 +20,129 @@ const About = () => {
    useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setHeroIndex((i) => (i + 1) % heroSlides.length);
+      }, 5000);
+      return () => clearInterval(timer);
+    }, []);
+   <style>{`
+        .iq-hero {
+          position: relative;
+          width: 100%;
+          overflow: hidden;
+          background: #15171c;
+          height: 100dvh;
+        }
+        .iq-hero img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        @media (max-width: 767px) {
+          .iq-hero {
+            height: auto !important;
+            min-height: 0 !important;
+          }
+          .iq-hero img {
+            position: static !important;
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
+            object-fit: cover !important;
+          }
+        }
+
+        .iq-product-grid {
+          display: grid !important;
+          grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+          gap: 1.5rem;
+        }
+        @media (max-width: 767px) {
+          .iq-product-grid {
+            display: flex !important;
+            grid-template-columns: none !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            flex-wrap: nowrap !important;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+          }
+          .iq-product-item {
+            flex: 0 0 auto !important;
+            width: 68vw !important;
+            scroll-snap-align: start;
+          }
+          .iq-product-grid::-webkit-scrollbar {
+            height: 6px;
+          }
+          .iq-product-grid::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 9999px;
+          }
+          .iq-product-grid {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0,0,0,0.3) transparent;
+          }
+        }
+
+        .iq-banner-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        @media (max-width: 767px) {
+          .iq-banner-wrap {
+            min-height: 0 !important;
+          }
+          .iq-banner-wrap img {
+            position: static !important;
+            object-fit: contain !important;
+            height: auto !important;
+          }
+        }
+      `}</style>
+const heroSlides = [
+  { src: '/banner/fix.1.jpeg', alt: 'Elevate your vision - IQRA Optics premium eyewear' },
+  { src: '/banner/fix.2.jpeg', alt: 'Perfect vision, perfect style - IQRA Optics eyewear collection' },
+  { src: '/banner/fix.3.jpeg', alt: 'IQRA Optics luxury eyewear' },
+  { src: '/banner/new1.jpeg', alt: 'IQRA Optics luxury eyewear' },
+  { src: '/banner/new2.jpeg', alt: 'IQRA Optics luxury eyewear' },
+  { src: '/banner/new3.jpeg', alt: 'IQRA Optics luxury eyewear' },
+  { src: '/banner/new4.jpeg', alt: 'IQRA Optics luxury eyewear' },
+  { src: '/banner/new5.jpeg', alt: 'IQRA Optics luxury eyewear' },
+];
   return (
+    
     <div className="bg-white">
-      <div className="relative h-[55vh] md:h-[65vh] overflow-hidden">
-        <img src="/b4.jpeg" className="absolute inset-0 w-full h-full object-cover" alt="Iqra Optics store" />
-      </div>
+       <section className="iq-hero">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={heroSlides[heroIndex].src}
+                  src={heroSlides[heroIndex].src}
+                  alt={heroSlides[heroIndex].alt}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.8, ease: 'easeInOut' }}
+                />
+              </AnimatePresence>
+              <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                {heroSlides.map((slide, i) => (
+                  <button
+                    key={slide.src}
+                    onClick={() => setHeroIndex(i)}
+                    aria-label={`Go to slide ${i + 1}`}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      i === heroIndex ? 'w-8 bg-gold' : 'w-2 bg-white/60 hover:bg-white'
+                    }`}
+                  />
+                ))}
+              </div>
+            </section>
 
       <section className="container mx-auto px-4 max-w-4xl py-20 text-center">
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
