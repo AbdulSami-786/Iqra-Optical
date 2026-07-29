@@ -128,12 +128,25 @@
 
 
 
-// src/context/CartContext.js
+/// src/context/CartContext.js
 import React, { createContext, useState, useEffect, useContext } from 'react';
 
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
+
+// Checks nested prescription objects (rightEye/leftEye/etc.) for any real value,
+// instead of Object.values(prescription).some(v => v), which treats any object
+// (even one full of empty strings) as truthy and can miss/misreport fields.
+const hasPrescriptionValues = (prescription) => {
+  if (!prescription) return false;
+  return Object.values(prescription).some((val) => {
+    if (val && typeof val === 'object') {
+      return Object.values(val).some((v) => v !== '' && v !== null && v !== undefined);
+    }
+    return val !== '' && val !== null && val !== undefined && val !== 0;
+  });
+};
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => {
@@ -150,7 +163,7 @@ export const CartProvider = ({ children }) => {
   }, [cartItems]);
 
   const generateCartItemId = (product, prescription) => {
-    if (!prescription || Object.values(prescription).every(v => !v)) {
+    if (!hasPrescriptionValues(prescription)) {
       return product.id.toString();
     }
     const prescriptionHash = JSON.stringify(prescription);
@@ -174,7 +187,7 @@ export const CartProvider = ({ children }) => {
         ...product, 
         quantity,
         cartItemId,
-        hasPrescription: !!(product.prescription && Object.values(product.prescription).some(v => v)),
+        hasPrescription: hasPrescriptionValues(product.prescription),
         addedAt: new Date().toISOString()
       }];
     });
@@ -201,17 +214,32 @@ export const CartProvider = ({ children }) => {
   );
 
   const getPrescriptionSummary = (prescription) => {
-    if (!prescription) return null;
-    const hasValues = Object.values(prescription).some(v => v);
-    if (!hasValues) return null;
-    
+    if (!hasPrescriptionValues(prescription)) return null;
+
     const parts = [];
-    if (prescription.rightEye?.sphere || prescription.leftEye?.sphere) {
-      parts.push(`R: ${prescription.rightEye?.sphere || '0'}, L: ${prescription.leftEye?.sphere || '0'}`);
+
+    if (prescription.lensLabel) {
+      parts.push(prescription.lensLabel);
     }
+
+    const eyeSummary = (label, eye) => {
+      if (!eye) return null;
+      const bits = [];
+      if (eye.sphere !== '' && eye.sphere != null) bits.push(`SPH ${eye.sphere}`);
+      if (eye.cylinder !== '' && eye.cylinder != null) bits.push(`CYL ${eye.cylinder}`);
+      if (eye.axis !== '' && eye.axis != null) bits.push(`AXIS ${eye.axis}`);
+      return bits.length ? `${label}: ${bits.join(', ')}` : null;
+    };
+
+    const rightSummary = eyeSummary('R', prescription.rightEye);
+    const leftSummary = eyeSummary('L', prescription.leftEye);
+    if (rightSummary) parts.push(rightSummary);
+    if (leftSummary) parts.push(leftSummary);
+
     if (prescription.pd) {
       parts.push(`PD: ${prescription.pd}mm`);
     }
+
     return parts.join(' | ');
   };
 
