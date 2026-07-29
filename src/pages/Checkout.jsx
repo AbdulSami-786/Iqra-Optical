@@ -560,7 +560,6 @@
 
 
 
-// src/pages/Checkout.jsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Truck, ChevronLeft, CheckCircle2 } from 'lucide-react';
@@ -577,6 +576,36 @@ const PAYMENT_OPTIONS = [
   { id: 'bank', label: 'Bank Transfer', desc: 'Direct transfer to our account' },
 ];
 
+// Builds a readable, single-line-friendly prescription block for one item
+const buildPrescriptionLines = (prescription) => {
+  if (!prescription) return [];
+
+  const lines = [];
+
+  if (prescription.lensLabel) {
+    const charge = prescription.extraCharge > 0 ? ` (+PKR ${prescription.extraCharge})` : '';
+    lines.push(`   Lens: ${prescription.lensLabel}${charge}`);
+  }
+
+  const eyeLine = (label, eye) => {
+    if (!eye) return null;
+    const bits = [];
+    if (eye.sphere !== '' && eye.sphere != null) bits.push(`SPH ${eye.sphere}`);
+    if (eye.cylinder !== '' && eye.cylinder != null) bits.push(`CYL ${eye.cylinder}`);
+    if (eye.axis !== '' && eye.axis != null) bits.push(`AXIS ${eye.axis}`);
+    return bits.length ? `   ${label}: ${bits.join(', ')}` : null;
+  };
+
+  const rightLine = eyeLine('R', prescription.rightEye);
+  const leftLine = eyeLine('L', prescription.leftEye);
+  if (rightLine) lines.push(rightLine);
+  if (leftLine) lines.push(leftLine);
+
+  if (prescription.pd) lines.push(`   PD: ${prescription.pd}mm`);
+
+  return lines;
+};
+
 const buildWhatsAppMessage = ({ form, cartItems, cartTotal, shipping, total, paymentMethod }) => {
   const paymentLabel = PAYMENT_OPTIONS.find((p) => p.id === paymentMethod)?.label || paymentMethod;
 
@@ -584,11 +613,9 @@ const buildWhatsAppMessage = ({ form, cartItems, cartTotal, shipping, total, pay
     .map((item, i) => {
       const itemPrice = item.finalPrice ?? item.price;
       const totalItemPrice = itemPrice * item.quantity;
-      let line = `${i + 1}. ${item.name} x${item.quantity} - Rs. ${totalItemPrice.toLocaleString()}`;
-      if (item.prescription) {
-        line += ` (Lens: ${item.prescription.lensLabel}, +PKR ${item.prescription.extraCharge})`;
-      }
-      return line;
+      const line = `${i + 1}. ${item.name} x${item.quantity} - Rs. ${totalItemPrice.toLocaleString()}`;
+      const prescriptionLines = buildPrescriptionLines(item.prescription);
+      return [line, ...prescriptionLines].join('\n');
     })
     .join('\n');
 
