@@ -16,10 +16,20 @@ const Contact = () => {
     setForm({ name: '', email: '', message: '' });
   };
 
+  const branches = [
+    {
+      title: 'IQRA OPTICS – Branch 1',
+      desc: 'Shop No. 1, Memon Masjid, Siddiqabad, F.B. Area, Gulberg Town, Karachi',
+    },
+    {
+      title: 'IQRA OPTICS – Branch 2',
+      desc: 'Shop No. G24, Arshi Shopping Center, Ayesha Manzil, Karachi',
+    },
+  ];
+
   const infoItems = [
-    { icon: MapPin, title: 'Visit Us', desc: 'Karachi, Pakistan' },
-    { icon: Phone, title: 'Call Us', desc: '+92 371 1191925' },
-    { icon: Mail, title: 'Email Us', desc: 'IqraOptical@gmail.com' },
+    { icon: Phone, title: 'WhatsApp', desc: '0300-2615141' },
+    { icon: Mail, title: 'Email Us', desc: 'iqraoptics01@gmail.com' },
     { icon: Clock, title: 'Working Hours', desc: 'Mon – Sat, 10am – 9pm' },
   ];
 
@@ -27,11 +37,30 @@ const Contact = () => {
     <div className="bg-white">
       <div className="bg-cream/60 py-16 text-center border-b border-gray-100">
         <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-gold">Get in Touch</span>
-        <h1 className="text-3xl md:text-4xl font-serif font-semibold text-ink mt-2">We'd Love to Hear From You</h1>
+        <h1 className="text-3xl md:text-4xl font-serif font-semibold text-ink mt-2">Contact Us</h1>
+        <p className="text-sm text-gray-500 mt-3 max-w-xl mx-auto px-4">
+          We're here to help with all your eyewear needs. For inquiries, orders, appointments, or product
+          information, feel free to contact us — our team is always ready to assist you.
+        </p>
       </div>
 
       <div className="container mx-auto px-4 max-w-6xl py-16 grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-14">
         <div>
+          <h2 className="text-xl font-serif font-semibold text-ink mb-6">Our Branches</h2>
+          <div className="space-y-6 mb-10">
+            {branches.map((branch) => (
+              <div key={branch.title} className="flex items-start gap-4">
+                <div className="w-11 h-11 rounded-full bg-cream flex items-center justify-center flex-shrink-0">
+                  <MapPin size={18} className="text-gold" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-ink">{branch.title}</p>
+                  <p className="text-sm text-gray-500">{branch.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <h2 className="text-xl font-serif font-semibold text-ink mb-6">Contact Information</h2>
           <div className="space-y-6">
             {infoItems.map((item) => (
@@ -50,6 +79,10 @@ const Contact = () => {
           <div className="mt-10 rounded-2xl overflow-hidden shadow-card aspect-video">
             <img src="/b2.jpg" alt="Iqra Optics location" className="w-full h-full object-cover" />
           </div>
+
+          <p className="mt-6 text-center text-sm font-serif italic text-ink">
+            IQRA OPTICS – Your Trusted Eyewear Destination.
+          </p>
         </div>
 
         <div className="bg-white rounded-3xl shadow-card p-8">
