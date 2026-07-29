@@ -22,9 +22,9 @@ const staggerParent = {
 };
 
 const heroSlides = [
-  { src: '/public/banner/fix.1.jpeg', alt: 'Elevate your vision - IQRA Optics premium eyewear' },
-  { src: '/public/banner/fix.2.jpeg', alt: 'Perfect vision, perfect style - IQRA Optics eyewear collection' },
-  { src: '/public/banner/fix.3.jpeg', alt: 'IQRA Optics luxury eyewear' },
+  { src: '/banner/fix.1.jpeg', alt: 'Elevate your vision - IQRA Optics premium eyewear' },
+  { src: '/banner/fix.2.jpeg', alt: 'Perfect vision, perfect style - IQRA Optics eyewear collection' },
+  { src: '/banner/fix.3.jpeg', alt: 'IQRA Optics luxury eyewear' },
 ];
 
 const perks = [
