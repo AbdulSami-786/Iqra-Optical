@@ -46,7 +46,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white/95 backdrop-blur-md sticky top-0 z-[100] border-b border-gray-100">
+    <nav style={{background: '#f6f6f4'}} className=" backdrop-blur-md sticky top-0 z-[100] border-b border-gray-100">
       <div className="bg-ink text-white text-[10px] py-2 text-center tracking-[0.3em] uppercase font-semibold">
         Free Shipping on orders over Rs. 5000
       </div>
