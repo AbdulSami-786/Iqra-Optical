@@ -316,7 +316,7 @@ const heroSlides = [
 
 const perks = [
   { icon: Truck, title: 'Free Shipping', desc: 'On orders over Rs. 5,000' },
-    { icon: ShieldCheck, title: 'Prescription Accuracy', desc: 'Precision lenses for crystal-clear vision' },
+  { icon: ShieldCheck, title: 'Prescription Accuracy', desc: 'Precision lenses for crystal-clear vision' },
   { icon: Clock, title: 'premium quality', desc: 'good quality material' },
   { icon: Award, title: 'Certified Lenses', desc: 'UV400 & anti-scratch coated' },
 ];
@@ -369,16 +369,83 @@ const Home = () => {
 
   return (
     <div className="bg-white">
-      {/* HERO */}
       {/*
-        Mobile fix: full viewport height + object-cover was cropping the banner
-        on narrow screens because the image's aspect ratio didn't match a tall
-        mobile viewport. Now mobile gets a shorter, aspect-ratio-based box with
-        object-contain (so the whole image is always visible, letterboxed on
-        bg-ink if needed), while larger screens keep the original full-bleed
-        h-dvh + object-cover treatment.
+        Hard CSS overrides — plain media queries with !important instead of
+        relying only on Tailwind's responsive utility classes. This guarantees
+        the mobile layout regardless of any build/purge/specificity issue
+        elsewhere in the project.
       */}
-      <section className="relative w-full h-[52vh] min-h-[320px] sm:h-[70vh] md:h-dvh overflow-hidden bg-ink">
+      <style>{`
+        .iq-hero {
+          position: relative;
+          width: 100%;
+          overflow: hidden;
+          background: #15171c;
+          height: 100dvh;
+        }
+        .iq-hero img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        @media (max-width: 767px) {
+          .iq-hero {
+            height: 55vh !important;
+            min-height: 340px !important;
+          }
+          .iq-hero img {
+            object-fit: contain !important;
+          }
+        }
+
+        .iq-product-grid {
+          display: grid !important;
+          grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+          gap: 1.5rem;
+        }
+        @media (max-width: 767px) {
+          .iq-product-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .iq-product-scroll {
+            max-height: 520px !important;
+            overflow-y: auto !important;
+            padding-right: 4px;
+          }
+          .iq-product-scroll::-webkit-scrollbar {
+            width: 6px;
+          }
+          .iq-product-scroll::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 9999px;
+          }
+          .iq-product-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0,0,0,0.3) transparent;
+          }
+        }
+
+        .iq-banner-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        @media (max-width: 767px) {
+          .iq-banner-wrap {
+            min-height: 0 !important;
+          }
+          .iq-banner-wrap img {
+            position: static !important;
+            object-fit: contain !important;
+            height: auto !important;
+          }
+        }
+      `}</style>
+
+      {/* HERO */}
+      <section className="iq-hero">
         <AnimatePresence mode="wait">
           <motion.img
             key={heroSlides[heroIndex].src}
@@ -388,7 +455,6 @@ const Home = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: 'easeInOut' }}
-            className="absolute inset-0 w-full h-full object-contain md:object-cover"
           />
         </AnimatePresence>
         <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
@@ -464,24 +530,15 @@ const Home = () => {
         </div>
       </section>
 
-      {/*
-        PRODUCT GRIDS (Featured / New Arrivals / Best Sellers)
-        Mobile fix: single product per row (grid-cols-1) instead of 2-up.
-        Also wrapped in a scrollable box on mobile only (max-h + overflow-y-auto,
-        with a visible thin scrollbar) so a long single-column list doesn't
-        force huge page scroll — it scrolls inside its own box on phones, and
-        reverts to the normal full-page grid layout from `sm` up.
-      */}
-
       {/* FEATURED */}
       <Section title="Featured Products" subtitle="Handpicked" viewAllLink="/products">
-        <div className="max-h-[520px] overflow-y-auto pr-1 mobile-scrollbar sm:max-h-none sm:overflow-visible sm:pr-0">
+        <div className="iq-product-scroll">
           <motion.div
             variants={staggerParent}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.1 }}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6"
+            className="iq-product-grid"
           >
             {featured.map((p) => (
               <motion.div key={p.id} variants={fadeUp}>
@@ -495,21 +552,21 @@ const Home = () => {
       {/* BANNER */}
       <section className="py-4">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="relative rounded-3xl overflow-hidden min-h-[220px] sm:min-h-[320px]">
-            <img src="/b3.jpeg" alt="Seasonal offer" className="w-full h-full object-contain sm:object-cover sm:absolute sm:inset-0" />
+          <div className="iq-banner-wrap relative rounded-3xl overflow-hidden min-h-[320px]">
+            <img src="/b3.jpeg" alt="Seasonal offer" className="absolute inset-0 w-full h-full" />
           </div>
         </div>
       </section>
 
       {/* NEW ARRIVALS */}
       <Section title="New Arrivals" subtitle="Just Landed" viewAllLink="/products?sort=newest">
-        <div className="max-h-[520px] overflow-y-auto pr-1 mobile-scrollbar sm:max-h-none sm:overflow-visible sm:pr-0">
+        <div className="iq-product-scroll">
           <motion.div
             variants={staggerParent}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.1 }}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 md:gap-6"
+            className="iq-product-grid"
           >
             {newArrivals.map((p) => (
               <motion.div key={p.id} variants={fadeUp}>
@@ -522,13 +579,13 @@ const Home = () => {
 
       {/* BEST SELLERS */}
       <Section title="Best Sellers" subtitle="Customer Favorites" viewAllLink="/products?sort=popular">
-        <div className="max-h-[520px] overflow-y-auto pr-1 mobile-scrollbar sm:max-h-none sm:overflow-visible sm:pr-0">
+        <div className="iq-product-scroll">
           <motion.div
             variants={staggerParent}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.1 }}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 md:gap-6"
+            className="iq-product-grid"
           >
             {bestSellers.map((p) => (
               <motion.div key={p.id} variants={fadeUp}>
@@ -564,28 +621,6 @@ const Home = () => {
       </section>
 
       <QuickViewModal product={quickViewProduct} onClose={closeQuickView} />
-
-      {/*
-        Thin, always-visible scrollbar for the mobile product boxes above.
-        (Most mobile browsers auto-hide scrollbars by default; this keeps
-        them visibly present as requested.)
-      */}
-      <style>{`
-        .mobile-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .mobile-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .mobile-scrollbar::-webkit-scrollbar-thumb {
-          background-color: rgba(0,0,0,0.25);
-          border-radius: 9999px;
-        }
-        .mobile-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: rgba(0,0,0,0.25) transparent;
-        }
-      `}</style>
     </div>
   );
 };
