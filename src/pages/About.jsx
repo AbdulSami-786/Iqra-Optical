@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Award, ShieldCheck, Heart, Sparkles, Truck, Eye } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect , useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 const fadeUp = {
