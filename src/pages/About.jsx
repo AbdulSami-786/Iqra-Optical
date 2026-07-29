@@ -16,6 +16,9 @@ const values = [
 ];
 
 const About = () => {
+   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="bg-white">
       <div className="relative h-[55vh] md:h-[65vh] overflow-hidden">

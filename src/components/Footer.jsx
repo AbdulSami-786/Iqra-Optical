@@ -32,8 +32,8 @@ const Footer = () => {
               <li><Link to="/products" className="hover:text-ink transition-colors">Shop All</Link></li>
               <li><Link to="/about" className="hover:text-ink transition-colors">About Us</Link></li>
               <li><Link to="/contact" className="hover:text-ink transition-colors">Contact Us</Link></li>
-              <li><Link to="/wishlist" className="hover:text-ink transition-colors">Wishlist</Link></li>
-              <li><Link to="/orders" className="hover:text-ink transition-colors">Track Order</Link></li>
+             
+              
             </ul>
           </div>
 
