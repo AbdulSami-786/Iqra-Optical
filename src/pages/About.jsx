@@ -116,6 +116,7 @@ const heroSlides = [
   { src: '/banner/new4.jpeg', alt: 'IQRA Optics luxury eyewear' },
   { src: '/banner/new5.jpeg', alt: 'IQRA Optics luxury eyewear' },
 ];
+  const [heroIndex, setHeroIndex] = useState(0);
   return (
     
     <div className="bg-white">
