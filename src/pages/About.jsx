@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Award, ShieldCheck, Heart, Sparkles, Truck, Eye } from 'lucide-react';
 import { useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
