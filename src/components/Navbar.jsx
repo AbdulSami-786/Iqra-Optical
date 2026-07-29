@@ -137,18 +137,9 @@ const Navbar = () => {
               )}
             </div>
 
-            <Link to="/wishlist" onClick={closeMenu} className="relative group">
-              <Heart size={20} strokeWidth={1.8} className="text-gray-700 group-hover:text-black transition-colors" />
-              {wishlistItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 text-[9px] bg-gold text-white w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                  {wishlistItems.length}
-                </span>
-              )}
-            </Link>
+      
 
-            <Link to="/profile" onClick={closeMenu} className="hidden sm:inline-flex text-gray-700 hover:text-black transition-colors">
-              <User size={20} strokeWidth={1.8} />
-            </Link>
+          
 
             <Link to="/cart" onClick={closeMenu} className="relative group">
               <ShoppingBag size={20} strokeWidth={1.8} className="text-gray-700 group-hover:text-black transition-colors" />
