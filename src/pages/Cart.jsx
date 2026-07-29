@@ -154,10 +154,6 @@
 
 
 
-
-
-
-
 // src/pages/Cart.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -166,7 +162,7 @@ import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 const Cart = () => {
-  const { cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, cartTotal, getPrescriptionSummary } = useCart();
 
   if (cartItems.length === 0) {
     return (
@@ -208,6 +204,7 @@ const Cart = () => {
               // Use finalPrice if present, otherwise item.price
               const itemPrice = item.finalPrice ?? item.price;
               const totalItemPrice = itemPrice * item.quantity;
+              const prescriptionSummary = getPrescriptionSummary(item.prescription);
 
               return (
                 <motion.div
@@ -232,13 +229,32 @@ const Cart = () => {
                             <p className="text-xs text-gray-500 mt-0.5">Color: {item.selectedColor}</p>
                           )}
                           {/* Prescription details if present */}
-                          {item.prescription && (
+                          {prescriptionSummary && (
                             <div className="mt-1 text-xs text-gray-500">
-                              <span className="font-medium">Lens:</span> {item.prescription.lensLabel} 
-                              <span className="ml-2 text-gray-400">(+PKR {item.prescription.extraCharge})</span>
-                              <div className="flex gap-3 mt-0.5 text-[10px] text-gray-400">
-                                <span>R: Sph {item.prescription.rightEye.sphere || '0.00'}, Ax {item.prescription.rightEye.axis || '0'}</span>
-                                <span>L: Sph {item.prescription.leftEye.sphere || '0.00'}, Ax {item.prescription.leftEye.axis || '0'}</span>
+                              {item.prescription?.lensLabel && (
+                                <>
+                                  <span className="font-medium">Lens:</span> {item.prescription.lensLabel}
+                                  {item.prescription.extraCharge > 0 && (
+                                    <span className="ml-2 text-gray-400">(+PKR {item.prescription.extraCharge})</span>
+                                  )}
+                                </>
+                              )}
+                              <div className="mt-0.5 text-[10px] text-gray-400 space-y-0.5">
+                                {item.prescription?.rightEye && (
+                                  <div>
+                                    R: Sph {item.prescription.rightEye.sphere || '0.00'}
+                                    {', Cyl '}{item.prescription.rightEye.cylinder || '0.00'}
+                                    {', Axis '}{item.prescription.rightEye.axis || '0'}
+                                  </div>
+                                )}
+                                {item.prescription?.leftEye && (
+                                  <div>
+                                    L: Sph {item.prescription.leftEye.sphere || '0.00'}
+                                    {', Cyl '}{item.prescription.leftEye.cylinder || '0.00'}
+                                    {', Axis '}{item.prescription.leftEye.axis || '0'}
+                                  </div>
+                                )}
+                                {item.prescription?.pd && <div>PD: {item.prescription.pd}mm</div>}
                               </div>
                             </div>
                           )}

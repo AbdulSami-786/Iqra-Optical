@@ -129,6 +129,7 @@
 
 
 /// src/context/CartContext.js
+// src/context/CartContext.js
 import React, { createContext, useState, useEffect, useContext } from 'react';
 
 const CartContext = createContext();
