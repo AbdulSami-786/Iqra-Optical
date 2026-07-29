@@ -10,6 +10,7 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 };
 
+const [heroIndex, setHeroIndex] = useState(0);
 const values = [
   { icon: Sparkles, title: 'Premium Quality', desc: 'Every frame is crafted from carefully sourced materials and finished to the highest standard.' },
   { icon: Heart, title: 'Personal Touch', desc: 'Styles curated for every face shape, gender, and personality — with expert fitting guidance.' },
@@ -18,25 +19,16 @@ const values = [
 ];
 
 const About = () => {
-   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-    useEffect(() => {
-      const timer = setInterval(() => {
-        setHeroIndex((i) => (i + 1) % heroSlides.length);
-      }, 5000);
-      return () => clearInterval(timer);
-    }, []);
-   <style>{`
-        .iq-hero {
-          position: relative;
-          width: 100%;
-          overflow: hidden;
-          background: #15171c;
-          height: 100dvh;
-        }
-        .iq-hero img {
-          position: absolute;
+  <style>{`
+    .iq-hero {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      background: #15171c;
+      height: 100dvh;
+      }
+      .iq-hero img {
+        position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
@@ -116,7 +108,15 @@ const heroSlides = [
   { src: '/banner/new4.jpeg', alt: 'IQRA Optics luxury eyewear' },
   { src: '/banner/new5.jpeg', alt: 'IQRA Optics luxury eyewear' },
 ];
-  const [heroIndex, setHeroIndex] = useState(0);
+  useEffect(() => {
+   window.scrollTo(0, 0);
+ }, []);
+   useEffect(() => {
+     const timer = setInterval(() => {
+       setHeroIndex((i) => (i + 1) % heroSlides.length);
+     }, 5000);
+     return () => clearInterval(timer);
+   }, []);
   return (
     
     <div className="bg-white">
