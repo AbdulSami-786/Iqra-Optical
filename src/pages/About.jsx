@@ -152,12 +152,17 @@ const About = () => {
       <section className="container mx-auto px-4 max-w-4xl py-20 text-center">
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
           <Eye size={36} className="text-gold mx-auto mb-6" strokeWidth={1.2} />
-          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-ink mb-6">Vision Beyond Eyewear</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-ink mb-6">Welcome to Iqra Optics</h2>
+          <p className="text-gray-600 leading-relaxed text-base md:text-lg mb-5">
+            Your trusted destination for quality eyewear in Karachi. We are committed to providing
+            stylish frames, premium lenses, sunglasses, contact lenses, and professional eye care
+            solutions to help you see clearly and look your best.
+          </p>
           <p className="text-gray-600 leading-relaxed text-base md:text-lg">
-            Iqra Optics began with a simple belief: that eyewear should be as much a statement of
-            style as it is a tool for clarity. From our roots in Karachi, we've grown into a trusted
-            destination for premium eyeglasses, sunglasses, and contact lenses — blending precision
-            optics with timeless design for men, women, and everyone in between.
+            We believe eyewear is more than just vision correction — it's a part of your personality
+            and lifestyle. That's why we offer a wide range of modern designs, durable materials, and
+            advanced lens options, including Blue Cut, UV Protection, Transition, Bifocal, and
+            Progressive lenses.
           </p>
         </motion.div>
       </section>
@@ -194,11 +199,14 @@ const About = () => {
           </motion.div>
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
             <Award size={30} className="text-gold mb-4" strokeWidth={1.3} />
-            <h2 className="text-3xl font-serif font-semibold text-ink mb-4">Established on Precision</h2>
-            <p className="text-gray-600 leading-relaxed mb-6">
-              Every pair in our collection is inspected for fit, durability, and finish before it
-              reaches you. We work directly with trusted manufacturers to bring internationally
-              inspired designs to Pakistan at honest prices.
+            <h2 className="text-3xl font-serif font-semibold text-ink mb-4">Our Commitment to You</h2>
+            <p className="text-gray-600 leading-relaxed mb-4">
+              Our goal is to deliver excellent customer service, genuine products, and affordable
+              prices while ensuring every customer finds the perfect eyewear for their needs.
+            </p>
+            <p className="text-gray-600 leading-relaxed mb-6 italic">
+              Thank you for choosing Iqra Optics. We look forward to serving you and helping you
+              experience clearer vision with confidence.
             </p>
             <Link
               to="/products"
