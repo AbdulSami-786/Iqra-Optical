@@ -1,16 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Award, ShieldCheck, Heart, Sparkles, Truck, Eye } from 'lucide-react';
-import { useEffect , useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 };
 
-const [heroIndex, setHeroIndex] = useState(0);
 const values = [
   { icon: Sparkles, title: 'Premium Quality', desc: 'Every frame is crafted from carefully sourced materials and finished to the highest standard.' },
   { icon: Heart, title: 'Personal Touch', desc: 'Styles curated for every face shape, gender, and personality — with expert fitting guidance.' },
@@ -18,17 +15,43 @@ const values = [
   { icon: Truck, title: 'Easy Delivery', desc: 'Nationwide delivery with cash-on-delivery available for a stress-free shopping experience.' },
 ];
 
+const heroSlides = [
+  { src: '/banner/fix.1.jpeg', alt: 'Elevate your vision - IQRA Optics premium eyewear' },
+  { src: '/banner/fix.2.jpeg', alt: 'Perfect vision, perfect style - IQRA Optics eyewear collection' },
+  { src: '/banner/fix.3.jpeg', alt: 'IQRA Optics luxury eyewear' },
+  { src: '/banner/new1.jpeg', alt: 'IQRA Optics luxury eyewear' },
+  { src: '/banner/new2.jpeg', alt: 'IQRA Optics luxury eyewear' },
+  { src: '/banner/new3.jpeg', alt: 'IQRA Optics luxury eyewear' },
+  { src: '/banner/new4.jpeg', alt: 'IQRA Optics luxury eyewear' },
+  { src: '/banner/new5.jpeg', alt: 'IQRA Optics luxury eyewear' },
+];
+
 const About = () => {
-  <style>{`
-    .iq-hero {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-      background: #15171c;
-      height: 100dvh;
-      }
-      .iq-hero img {
-        position: absolute;
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroIndex((i) => (i + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <>
+      <style>{`
+        .iq-hero {
+          position: relative;
+          width: 100%;
+          overflow: hidden;
+          background: #15171c;
+          height: 100dvh;
+        }
+        .iq-hero img {
+          position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
@@ -98,26 +121,6 @@ const About = () => {
           }
         }
       `}</style>
-const heroSlides = [
-  { src: '/banner/fix.1.jpeg', alt: 'Elevate your vision - IQRA Optics premium eyewear' },
-  { src: '/banner/fix.2.jpeg', alt: 'Perfect vision, perfect style - IQRA Optics eyewear collection' },
-  { src: '/banner/fix.3.jpeg', alt: 'IQRA Optics luxury eyewear' },
-  { src: '/banner/new1.jpeg', alt: 'IQRA Optics luxury eyewear' },
-  { src: '/banner/new2.jpeg', alt: 'IQRA Optics luxury eyewear' },
-  { src: '/banner/new3.jpeg', alt: 'IQRA Optics luxury eyewear' },
-  { src: '/banner/new4.jpeg', alt: 'IQRA Optics luxury eyewear' },
-  { src: '/banner/new5.jpeg', alt: 'IQRA Optics luxury eyewear' },
-];
-  useEffect(() => {
-   window.scrollTo(0, 0);
- }, []);
-   useEffect(() => {
-     const timer = setInterval(() => {
-       setHeroIndex((i) => (i + 1) % heroSlides.length);
-     }, 5000);
-     return () => clearInterval(timer);
-   }, []);
-  return (
     
     <div className="bg-white">
        <section className="iq-hero">
@@ -207,6 +210,7 @@ const heroSlides = [
         </div>
       </section>
     </div>
+    </>
   );
 };
 
