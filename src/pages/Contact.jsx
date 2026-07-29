@@ -77,7 +77,7 @@ const Contact = () => {
           </div>
 
           <div className="mt-10 rounded-2xl overflow-hidden shadow-card aspect-video">
-            <img src="/b2.jpg" alt="Iqra Optics location" className="w-full h-full object-cover" />
+            <img src="/shop1.jpeg" alt="Iqra Optics location" className="w-full h-full object-cover" />
           </div>
 
           <p className="mt-6 text-center text-sm font-serif italic text-ink">
