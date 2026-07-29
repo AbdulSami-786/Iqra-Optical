@@ -392,11 +392,15 @@ const Home = () => {
         }
         @media (max-width: 767px) {
           .iq-hero {
-            height: 55vh !important;
-            min-height: 340px !important;
+            height: auto !important;
+            min-height: 0 !important;
           }
           .iq-hero img {
-            object-fit: contain !important;
+            position: static !important;
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
+            object-fit: cover !important;
           }
         }
 
@@ -407,21 +411,28 @@ const Home = () => {
         }
         @media (max-width: 767px) {
           .iq-product-grid {
-            grid-template-columns: 1fr !important;
+            display: flex !important;
+            grid-template-columns: none !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            flex-wrap: nowrap !important;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
           }
-          .iq-product-scroll {
-            max-height: 520px !important;
-            overflow-y: auto !important;
-            padding-right: 4px;
+          .iq-product-item {
+            flex: 0 0 auto !important;
+            width: 68vw !important;
+            scroll-snap-align: start;
           }
-          .iq-product-scroll::-webkit-scrollbar {
-            width: 6px;
+          .iq-product-grid::-webkit-scrollbar {
+            height: 6px;
           }
-          .iq-product-scroll::-webkit-scrollbar-thumb {
+          .iq-product-grid::-webkit-scrollbar-thumb {
             background-color: rgba(0,0,0,0.3);
             border-radius: 9999px;
           }
-          .iq-product-scroll {
+          .iq-product-grid {
             scrollbar-width: thin;
             scrollbar-color: rgba(0,0,0,0.3) transparent;
           }
@@ -532,8 +543,7 @@ const Home = () => {
 
       {/* FEATURED */}
       <Section title="Featured Products" subtitle="Handpicked" viewAllLink="/products">
-        <div className="iq-product-scroll">
-          <motion.div
+                  <motion.div
             variants={staggerParent}
             initial="hidden"
             whileInView="show"
@@ -541,12 +551,11 @@ const Home = () => {
             className="iq-product-grid"
           >
             {featured.map((p) => (
-              <motion.div key={p.id} variants={fadeUp}>
+              <motion.div key={p.id} variants={fadeUp} className="iq-product-item">
                 <ProductCard product={p} onQuickView={handleQuickView} />
               </motion.div>
             ))}
           </motion.div>
-        </div>
       </Section>
 
       {/* BANNER */}
@@ -560,8 +569,7 @@ const Home = () => {
 
       {/* NEW ARRIVALS */}
       <Section title="New Arrivals" subtitle="Just Landed" viewAllLink="/products?sort=newest">
-        <div className="iq-product-scroll">
-          <motion.div
+                  <motion.div
             variants={staggerParent}
             initial="hidden"
             whileInView="show"
@@ -569,18 +577,16 @@ const Home = () => {
             className="iq-product-grid"
           >
             {newArrivals.map((p) => (
-              <motion.div key={p.id} variants={fadeUp}>
+              <motion.div key={p.id} variants={fadeUp} className="iq-product-item">
                 <ProductCard product={p} onQuickView={handleQuickView} />
               </motion.div>
             ))}
           </motion.div>
-        </div>
       </Section>
 
       {/* BEST SELLERS */}
       <Section title="Best Sellers" subtitle="Customer Favorites" viewAllLink="/products?sort=popular">
-        <div className="iq-product-scroll">
-          <motion.div
+                  <motion.div
             variants={staggerParent}
             initial="hidden"
             whileInView="show"
@@ -588,12 +594,11 @@ const Home = () => {
             className="iq-product-grid"
           >
             {bestSellers.map((p) => (
-              <motion.div key={p.id} variants={fadeUp}>
+              <motion.div key={p.id} variants={fadeUp} className="iq-product-item">
                 <ProductCard product={p} onQuickView={handleQuickView} />
               </motion.div>
             ))}
           </motion.div>
-        </div>
       </Section>
 
       {/* NEWSLETTER STRIP */}
