@@ -13,17 +13,22 @@ const Footer = () => {
             <p className="text-sm text-gray-600 leading-relaxed">
               Premium eyewear crafted with precision and style. Experience clarity and confidence with every pair.
             </p>
-            <div className="flex space-x-3">
-              {[FaFacebook, FaInstagram, FaTwitter, FaWhatsapp].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-9 h-9 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-ink hover:text-white hover:border-ink transition-all duration-300"
-                >
-                  <Icon size={15} />
-                </a>
-              ))}
-            </div>
+          <div className="flex space-x-3">
+  {[
+    { Icon: FaFacebook, href: 'https://www.facebook.com/share/19HQrUoKNU/' },
+    { Icon: FaInstagram, href: 'https://www.instagram.com/iqra_optic?igsh=NzJjdnFoeG15YTU1' },
+  ].map(({ Icon, href }, i) => (
+    <a
+      key={i}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-9 h-9 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-ink hover:text-white hover:border-ink transition-all duration-300"
+    >
+      <Icon size={15} />
+    </a>
+  ))}
+</div>
           </div>
 
           <div>
