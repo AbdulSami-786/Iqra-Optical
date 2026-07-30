@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Award, ShieldCheck, Heart, Sparkles, Truck, Eye } from 'lucide-react';
 
 const fadeUp = {
@@ -124,17 +124,10 @@ const About = () => {
     
     <div className="bg-white">
        <section className="iq-hero">
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={heroSlides[heroIndex].src}
-                  src={heroSlides[heroIndex].src}
-                  alt={heroSlides[heroIndex].alt}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.8, ease: 'easeInOut' }}
-                />
-              </AnimatePresence>
+              <img
+                src={heroSlides[heroIndex].src}
+                alt={heroSlides[heroIndex].alt}
+              />
               <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                 {heroSlides.map((slide, i) => (
                   <button
