@@ -41,8 +41,8 @@ const perks = [
 
 // Category name -> image mapping for the "Shop by Category" section
 const categoryImages = {
-  women: '/cat1.jpeg',
-  men: '/cat2.jpeg',
+  ladies: '/cat1.jpeg',
+  gents: '/cat2.jpeg',
   unisex: '/cat3.jpeg',
 };
 
