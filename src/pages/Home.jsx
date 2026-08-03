@@ -41,12 +41,12 @@ const perks = [
 
 // Category name -> image mapping for the "Shop by Category" section
 const categoryImages = {
-  ladies: '/cat1.jpeg',
-  gents: '/cat2.jpeg',
-  unisex: '/cat3.jpeg',
+  ladies: { src: '/cat1.jpeg', position: '50% 18%' },
+  gents: { src: '/cat2.jpeg', position: '50% 18%' },
+  sunglasses: { src: '/b3.jpeg', position: '10% 28%' },
 };
 
-const getCategoryImage = (cat) => categoryImages[cat?.toLowerCase()] || '/cat1.jpeg';
+const getCategoryImage = (cat) => categoryImages[cat?.toLowerCase()] || categoryImages.ladies;
 
 const Section = ({ title, subtitle, children, viewAllLink }) => (
   <section className="py-16 md:py-20">
@@ -246,9 +246,10 @@ const Home = () => {
                   className="group relative block rounded-xl sm:rounded-2xl overflow-hidden aspect-[3/4] sm:aspect-[4/5] shadow-card hover:shadow-soft transition-all duration-500"
                 >
                   <img
-                    src={getCategoryImage(cat)}
+                    src={getCategoryImage(cat).src}
                     alt={`${cat} eyewear collection`}
-                    className="w-full h-full object-cover object-[50%_18%] group-hover:scale-110 transition-transform duration-700"
+                    style={{ objectPosition: getCategoryImage(cat).position }}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
                   <div className="absolute inset-0 rounded-xl sm:rounded-2xl ring-1 ring-inset ring-white/10" />
