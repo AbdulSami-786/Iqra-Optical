@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MessageSquare, MapPin, Clock, CheckCircle } from 'lucide-react';
 
 const inputClass =

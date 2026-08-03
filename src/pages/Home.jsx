@@ -237,22 +237,26 @@ const Home = () => {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-5"
+            className="grid grid-cols-3 gap-3 sm:gap-5 md:gap-6"
           >
             {categories.map((cat) => (
               <motion.div key={cat} variants={fadeUp}>
                 <Link
                   to={`/products?category=${encodeURIComponent(cat)}`}
-                  className="group relative block rounded-2xl overflow-hidden aspect-[4/5] shadow-card hover:shadow-soft transition-shadow duration-500"
+                  className="group relative block rounded-xl sm:rounded-2xl overflow-hidden aspect-[3/4] sm:aspect-[4/5] shadow-card hover:shadow-soft transition-all duration-500"
                 >
                   <img
                     src={getCategoryImage(cat)}
-                    alt={cat}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    alt={`${cat} eyewear collection`}
+                    className="w-full h-full object-cover object-[50%_18%] group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute bottom-5 left-5">
-                    <p className="text-white font-serif text-xl font-semibold">{cat}</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
+                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl ring-1 ring-inset ring-white/10" />
+                  <div className="absolute inset-x-0 bottom-0 p-3 sm:p-5">
+                    <p className="text-white font-serif text-base sm:text-xl font-semibold leading-tight">{cat}</p>
+                    <span className="mt-1 hidden sm:flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-gold opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                      Shop Now <ArrowRight size={12} />
+                    </span>
                   </div>
                 </Link>
               </motion.div>
