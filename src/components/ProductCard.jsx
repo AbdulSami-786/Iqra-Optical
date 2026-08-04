@@ -82,7 +82,7 @@ const ProductCard = memo(function ProductCard({ product, onQuickView }) {
         <div className="flex items-center gap-2 text-[11px] text-gray-500 uppercase tracking-wide">
           <span>{product.shape}</span>
           <span className="w-1 h-1 rounded-full bg-gray-300" />
-          <span>{product.gender}</span>
+          <span>{Array.isArray(product.gender) ? product.gender.join(' / ') : product.gender}</span>
         </div>
         {typeof product.reviews === 'number' && (
           <span className="text-[11px] text-gray-400">{product.reviews} reviews</span>

@@ -352,6 +352,9 @@ const emptyFilters = () => ({
   genders: [],
 });
 
+const matchesFilter = (value, selected) =>
+  Array.isArray(value) ? value.some((v) => selected.includes(v)) : selected.includes(value);
+
 const Product = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const allProducts = useMemo(() => getAllProducts(), []);
@@ -397,9 +400,9 @@ const Product = () => {
 
   const filtered = useMemo(() => {
     let list = allProducts.filter((p) => {
-      if (filters.categories.length && !filters.categories.includes(p.category)) return false;
+      if (filters.categories.length && !matchesFilter(p.category, filters.categories)) return false;
       if (filters.shapes.length && !filters.shapes.includes(p.shape)) return false;
-      if (filters.genders.length && !filters.genders.includes(p.gender)) return false;
+      if (filters.genders.length && !matchesFilter(p.gender, filters.genders)) return false;
       if (p.price > priceMax) return false;
       return true;
     });

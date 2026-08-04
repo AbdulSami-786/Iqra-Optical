@@ -855,7 +855,7 @@ const ProductDetail = () => {
             <div className="grid grid-cols-2 gap-x-6 gap-y-3 mt-6 text-sm">
               <div className="flex justify-between border-b border-gray-100 pb-2">
                 <span className="text-gray-500">Category</span>
-                <span className="font-medium text-ink">{product.category}</span>
+                <span className="font-medium text-ink">{Array.isArray(product.category) ? product.category.join(' / ') : product.category}</span>
               </div>
               <div className="flex justify-between border-b border-gray-100 pb-2">
                 <span className="text-gray-500">Shape</span>
@@ -863,7 +863,7 @@ const ProductDetail = () => {
               </div>
               <div className="flex justify-between border-b border-gray-100 pb-2">
                 <span className="text-gray-500">Gender</span>
-                <span className="font-medium text-ink">{product.gender}</span>
+                <span className="font-medium text-ink">{Array.isArray(product.gender) ? product.gender.join(' / ') : product.gender}</span>
               </div>
               <div className="flex justify-between border-b border-gray-100 pb-2">
                 <span className="text-gray-500">Made in Taiwan</span>

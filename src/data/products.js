@@ -1562,8 +1562,8 @@ const rawProducts = [
     originalPrice: "3900",
     reviews: 31,
     madeInTaiwan: true,
-    category: "Gents",
-    gender: "Unisex",
+    category: ["Gents", "Ladies"],
+    gender: ["Gents", "Ladies"],
     shape: "Square",
     description:
       "A squared aviator silhouette in glossy black with a signature double bridge and gunmetal trim on the rims. Clear demo lenses make it ready for your prescription, with a fit that works for everyone.",
@@ -1996,8 +1996,8 @@ const rawProducts = [
     originalPrice: "900",
     reviews: 10,
     madeInTaiwan: false,
-    category: "Unisex",
-    gender: "Unisex",
+    category: ["Gents", "Ladies"],
+    gender: ["Gents", "Ladies"],
     shape: "Geometric",
     description:
       "A geometric half-rim frame in polished chrome-silver metal, with a slim rimless lower edge and fine wire temples. A light, minimal design that works for everyone.",
@@ -2010,8 +2010,8 @@ const rawProducts = [
     originalPrice: "800",
     reviews: 8,
     madeInTaiwan: false,
-    category: "Unisex",
-    gender: "Unisex",
+    category: ["Gents", "Ladies"],
+    gender: ["Gents", "Ladies"],
     shape: "Wayfarer",
     description:
       "A clean wayfarer silhouette in frosted lavender-grey acetate with a slim gunmetal hinge accent. A versatile, lightweight everyday optical pick that suits any face shape.",
@@ -2038,8 +2038,8 @@ const rawProducts = [
     originalPrice: "1100",
     reviews: 12,
     madeInTaiwan: false,
-    category: "Unisex",
-    gender: "Unisex",
+    category: ["Gents", "Ladies"],
+    gender: ["Gents", "Ladies"],
     shape: "Square",
     description:
       "A clean square frame in translucent crystal-grey acetate from the Sapphire Teens collection, with a compact silver block hinge. A sturdy, comfortable fit sized for younger wearers.",
@@ -2052,8 +2052,8 @@ const rawProducts = [
     originalPrice: "800",
     reviews: 15,
     madeInTaiwan: false,
-    category: "Unisex",
-    gender: "Unisex",
+    category: ["Gents", "Ladies"],
+    gender: ["Gents", "Ladies"],
     shape: "Wayfarer",
     description:
       "A clean wayfarer silhouette in fully transparent crystal acetate with a slim gunmetal hinge accent. A versatile, lightweight everyday optical pick that suits any face shape.",
@@ -2080,8 +2080,8 @@ const rawProducts = [
     originalPrice: "1200",
     reviews: 10,
     madeInTaiwan: false,
-    category: "Unisex",
-    gender: "Unisex",
+    category: ["Gents", "Ladies"],
+    gender: ["Gents", "Ladies"],
     shape: "Square",
     description:
       "A square frame in translucent ash-grey acetate from the Sapphire Teens collection, finished with a gold-accented logo hinge. A durable, comfortable everyday fit for younger wearers.",
@@ -2094,8 +2094,8 @@ const rawProducts = [
     originalPrice: "850",
     reviews: 16,
     madeInTaiwan: false,
-    category: "Unisex",
-    gender: "Unisex",
+    category: ["Gents", "Ladies"],
+    gender: ["Gents", "Ladies"],
     shape: "Round",
     description:
       "A rounded browline frame that fades from deep navy at the brow to clear at the base, with a purple-tinted temple tip peeking through. A relaxed, everyday pick with a subtle retro feel.",
@@ -2178,8 +2178,8 @@ const rawProducts = [
     originalPrice: "900",
     reviews: 14,
     madeInTaiwan: false,
-    category: "Unisex",
-    gender: "Unisex",
+    category: ["Gents", "Ladies"],
+    gender: ["Gents", "Ladies"],
     shape: "Square",
     description:
       "A clean square frame in frosted crystal-clear acetate with a slim silver hinge accent, from the Muscat Eyewear line. A light, versatile everyday optical pick.",
@@ -2192,8 +2192,8 @@ const rawProducts = [
     originalPrice: "850",
     reviews: 10,
     madeInTaiwan: false,
-    category: "Unisex",
-    gender: "Unisex",
+    category: ["Gents", "Ladies"],
+    gender: ["Gents", "Ladies"],
     shape: "Geometric",
     description:
       "A soft geometric frame in frosted sky-blue acetate that fades to clear at the base, finished with a dark tortoise hinge accent. A cool, lightweight pick for everyday wear.",
@@ -2234,8 +2234,8 @@ const rawProducts = [
     originalPrice: "950",
     reviews: 15,
     madeInTaiwan: false,
-    category: "Unisex",
-    gender: "Unisex",
+    category: ["Gents", "Ladies"],
+    gender: ["Gents", "Ladies"],
     shape: "Square",
     description:
       "A clean square frame in frosted stone-grey acetate with a dark hinge accent, from the French Eyewear line. A minimal, versatile everyday optical pick.",
@@ -2295,13 +2295,19 @@ export const getAllProducts = () => products;
 export const getProductById = (id) =>
   products.find((p) => String(p.id) === String(id));
 
+const sharesValue = (a, b) => {
+  const arrA = Array.isArray(a) ? a : [a];
+  const arrB = Array.isArray(b) ? b : [b];
+  return arrA.some((v) => arrB.includes(v));
+};
+
 export const getRelatedProducts = (product, limit = 4) => {
   if (!product) return [];
   return products
     .filter(
       (p) =>
         p.id !== product.id &&
-        (p.category === product.category || p.shape === product.shape)
+        (sharesValue(p.category, product.category) || p.shape === product.shape)
     )
     .slice(0, limit);
 };
@@ -2317,7 +2323,7 @@ export const getBestSellers = (limit = 8) =>
 
 export const getDiscountedProducts = (limit = 8) => [];
 
-const uniqueSorted = (arr) => [...new Set(arr)].filter(Boolean).sort();
+const uniqueSorted = (arr) => [...new Set(arr.flat())].filter(Boolean).sort();
 
 export const getFilterOptions = () => ({
   categories: uniqueSorted(products.map((p) => p.category)),
@@ -2335,6 +2341,7 @@ export const searchProducts = (query) => {
   const q = query.trim().toLowerCase();
   return products.filter((p) =>
     [p.name, p.category, p.shape, p.gender, p.description]
+      .flat()
       .filter(Boolean)
       .some((field) => field.toLowerCase().includes(q))
   );
