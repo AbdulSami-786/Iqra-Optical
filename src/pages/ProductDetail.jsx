@@ -985,20 +985,7 @@ const ProductDetail = () => {
             </div>
 
             {/* Trust badges */}
-            <div className="grid grid-cols-3 gap-3 mt-8 pt-6 border-t border-gray-100">
-              <div className="flex flex-col items-center text-center gap-1.5">
-                <Truck size={20} className="text-gold" strokeWidth={1.5} />
-                <span className="text-[10px] text-gray-500 uppercase tracking-wide">Fast Delivery</span>
-              </div>
-              <div className="flex flex-col items-center text-center gap-1.5">
-                <ShieldCheck size={20} className="text-gold" strokeWidth={1.5} />
-                <span className="text-[10px] text-gray-500 uppercase tracking-wide">1 Yr Warranty</span>
-              </div>
-              <div className="flex flex-col items-center text-center gap-1.5">
-                <RotateCcw size={20} className="text-gold" strokeWidth={1.5} />
-                <span className="text-[10px] text-gray-500 uppercase tracking-wide">Easy Returns</span>
-              </div>
-            </div>
+           
           </div>
         </div>
 
